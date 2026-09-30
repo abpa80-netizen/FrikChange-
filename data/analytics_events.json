@@ -1,0 +1,52 @@
+{
+  "events": [
+    {
+      "id": "evt-1790200214004-ai7z",
+      "eventName": "publish_click",
+      "source": "header",
+      "device": "desktop",
+      "annonceRef": null,
+      "timestamp": "2026-09-23T21:50:14.004Z"
+    },
+    {
+      "id": "evt-1790200214022-1vu9",
+      "eventName": "publish_submit",
+      "source": "modal_form",
+      "device": "desktop",
+      "annonceRef": null,
+      "timestamp": "2026-09-23T21:50:14.022Z"
+    },
+    {
+      "id": "evt-1790200214038-hval",
+      "eventName": "unlock_click",
+      "source": "card",
+      "device": "mobile",
+      "annonceRef": "ANN-101",
+      "timestamp": "2026-09-23T21:50:14.038Z"
+    },
+    {
+      "id": "evt-1790200214055-x6mq",
+      "eventName": "unlock_modal_open",
+      "source": "modal",
+      "device": "mobile",
+      "annonceRef": "ANN-101",
+      "timestamp": "2026-09-23T21:50:14.055Z"
+    },
+    {
+      "id": "evt-1790200214071-n50o",
+      "eventName": "unlock_chariow_click",
+      "source": "modal_pay_btn",
+      "device": "mobile",
+      "annonceRef": "ANN-101",
+      "timestamp": "2026-09-23T21:50:14.071Z"
+    }
+  ],
+  "summary": {
+    "page_views": 0,
+    "publish_clicks": 1,
+    "publish_submits": 1,
+    "unlock_clicks": 1,
+    "unlock_modal_opens": 1,
+    "unlock_chariow_clicks": 1
+  }
+}

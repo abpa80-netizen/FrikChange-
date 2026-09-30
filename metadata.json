@@ -1,0 +1,6 @@
+{
+  "name": "FrikChange",
+  "description": "Réseau Communautaire & Service de mise en relation directe Maroc ⇄ Afrique entre particuliers pour petites annonces, contacts locaux et services de transport GP solidaire.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
