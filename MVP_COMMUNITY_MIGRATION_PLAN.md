@@ -67,3 +67,20 @@ Créer une table distincte `public.community_listings` avec :
 - Ajouter une table privée séparée pour les signalements et une table privée pour les demandes de contact uniquement si nécessaire, avec politiques minimales et aucun accès public.
 
 **Aucune de ces propositions n'a encore été appliquée à Supabase.**
+
+## Phase 3 — table FrikChange créée et vérifiée
+Migration appliquée au projet Supabase `hykhktrkziotifcsufge` : `create_community_listings_with_rls`.
+- Table distincte `public.community_listings` créée ; aucune table historique ni aucune ligne existante modifiée.
+- Catégories autorisées : `DIGITAL_CURRENCY` et `PARCEL_CONNECTION` ; type : `OFFER` ou `REQUEST`.
+- Les champs publics ne contiennent ni numéro WhatsApp, ni montant, ni paire de devises, ni taux, ni coordonnées de paiement. Les annonces colis ne stockent que villes d'origine/destination et date indicative.
+- Statut initial imposé à `PENDING` par trigger ; un utilisateur authentifié ne peut pas modifier le propriétaire, l'horodatage initial ni le statut.
+- RLS activée ; lecture anonyme limitée aux annonces publiées non expirées ; utilisateurs authentifiés limités à leurs propres créations/éditions/suppressions ; privilèges Data API explicites et minimaux.
+- Trigger `SECURITY INVOKER`, `search_path` vide ; exécution directe de la fonction révoquée aux rôles client.
+- Vérification SQL : RLS active, cinq politiques attendues présentes, un trigger présent, 0 ligne dans la nouvelle table ; lecture anonyme vérifiée (0 ligne visible actuellement).
+- Security Advisor : aucun nouveau signalement relatif à cette table ; les alertes préexistantes restent présentes : tables internes sans politiques (sans privilèges client), deux anciennes fonctions SECURITY DEFINER `get_unlocked_contact` et `is_admin`, et protection des mots de passe compromis désactivée.
+- Pas encore de test avec deux vrais comptes Auth ; pas encore de flux de modération ni de contact.
+
+## État de la livraison après phase 3
+- Schéma Supabase appliqué et vérifié.
+- Code frontend de publication/consultation non connecté à cette table.
+- PR GitHub toujours non fusionnée ; aucune modification Vercel, domaine ou déploiement.
