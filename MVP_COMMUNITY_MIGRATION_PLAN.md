@@ -3,30 +3,34 @@
 ## Objectif
 Préparer une version publique de petites annonces communautaires générales. Les annonces d'échange de monnaie, de change, de transfert d'argent, de transport de bagages/colis et les services de voyageurs sont exclus du MVP. Aucun paiement, déblocage de contact payant, commission ou rémunération de parrainage n'est activé.
 
-## Périmètre vérifié sur la branche `mvp-community`
-- `index.html` contient encore les entrées de navigation Voyageurs GP, Simulateur, Ambassadeurs, des contenus sur les devises et Chariow, ainsi que la section de transport GP.
-- `app.js` contient encore l'URL Google Apps Script, les paramètres de taux, les promotions Chariow/GP, l'administration locale et des données de démonstration.
-- `api/support-chat.js` contient des instructions Chariow, échange de devises et transport GP.
-- `api/analytics.js` utilise des fichiers locaux, expose les actions `seed_demo` et `reset`, et suit des événements de déblocage Chariow.
-- `api/admin-publish-announcement.js` utilise un stockage local de secours et les routes POST/DELETE n'ont pas de contrôle d'accès administrateur visible dans le fichier inspecté.
-- `server.ts` monte les anciennes API.
-- `package.json` utilise Vite et copie `app.js` dans `dist`. Aucun `vercel.json` n'existe à la racine au moment de l'inspection.
+## Phase 1 — nettoyage initial effectué sur la branche de travail
+- Remplacement de l'ancien `index.html` par une entrée React propre.
+- Remplacement de l'ancienne interface par une page communautaire avec catégories générales et recherche locale de catégories.
+- Le navigateur ne charge plus l'ancien `app.js`; le script n'est plus copié dans `dist`, puis le fichier historique a été supprimé.
+- Suppression des API héritées : marketing, annonces officielles non protégées, analytics locale/démo, taux de change et support qui décrivait les services financiers et voyageurs.
+- Nettoyage de `server.ts` : retrait des routes API héritées et du catalogue de lieux de rencontre issu de l'ancien parcours.
+- Les tables Supabase `currency_listings` et `travel_listings` n'ont pas été modifiées.
 
-## Règles de migration
-1. Ne pas simplement cacher les anciennes rubriques : retirer les actions, handlers, routes et traitements côté serveur correspondants.
-2. Ne pas réutiliser les tables `currency_listings` et `travel_listings` dans le MVP.
-3. Créer une table distincte pour les annonces communautaires générales, avec RLS et tests d'isolation.
-4. Supprimer toute dépendance de publication aux Google Apps Script et au stockage local navigateur pour les annonces partagées.
-5. Retirer les paiements, les commissions, les déblocages de contacts et les faux indicateurs de démonstration.
-6. Remplacer l'administration locale par un contrôle serveur fondé sur un rôle fiable.
-7. Préserver les variables d'environnement, le projet Vercel et le domaine ; ne pas déployer avant les tests et la revue.
+## Fichiers principaux modifiés
+`index.html`, `src/App.tsx`, `src/main.tsx`, `src/index.css`, `server.ts`, `package.json`.
+Ancien `app.js` supprimé.
+API supprimées : `api/admin-generate-marketing.js`, `api/admin-publish-announcement.js`, `api/analytics.js`, `api/exchange-rates.js`, `api/support-chat.js`.
 
-## Ordre de travail proposé
-- Étape A : inventorier et retirer les sections HTML et les fonctions JS financières/GP/parrainage.
-- Étape B : retirer ou neutraliser les API Chariow, exchange-rates, GP et les endpoints d'administration non sécurisés.
-- Étape C : implémenter le modèle communautaire Supabase, l'authentification, les politiques RLS et les opérations CRUD.
-- Étape D : implémenter la modération, les signalements, la confidentialité et les statistiques réelles.
-- Étape E : exécuter build, lint, tests multi-comptes et tests de sécurité avant toute demande de déploiement.
+## Limites importantes — application non publiable à ce stade
+- L'interface affiche des catégories, mais ne présente pas encore d'annonces issues d'une base de données.
+- Authentification, publication, édition/suppression, recherche dans les annonces, signalement et modération ne sont pas encore implémentés.
+- Le formulaire de compte et les actions de publication ne sont donc pas activés.
+- Les fichiers d'administration/analytics hérités non montés peuvent encore exister dans le dépôt et doivent être vérifiés avant de les réintroduire.
+- Aucun build local, test navigateur ou test multi-comptes n'a été exécuté dans cette étape.
+- Aucune migration Supabase, modification des variables Vercel, modification du domaine, fusion ou déploiement n'a été effectué.
 
-## État
-Branche de travail créée depuis `main`. Ce document est un plan d'audit ; aucun code applicatif, aucune donnée Supabase, aucun secret Vercel, aucun domaine et aucun déploiement n'ont été modifiés.
+## Étapes suivantes
+1. Vérifier les références et fichiers résiduels, puis exécuter build/lint.
+2. Concevoir une table séparée `community_listings` avec RLS, validations et statuts de modération.
+3. Connecter Supabase Auth et implémenter les opérations CRUD, sans exposer de clé service_role.
+4. Ajouter signalements, blocage, modération serveur et protection des données personnelles.
+5. Tester deux comptes distincts, les accès publics, l'isolation des propriétaires et les cas abusifs.
+6. Préparer un déploiement de prévisualisation seulement après réussite des tests.
+
+## Préservation
+Le travail reste sur `mvp-community`. La branche `main`, le projet Supabase, les variables Vercel, le domaine et la production n'ont pas été modifiés.
