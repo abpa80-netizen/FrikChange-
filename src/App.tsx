@@ -64,6 +64,10 @@ export default function App() {
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editCity, setEditCity] = useState("");
+  const [moderationOpen, setModerationOpen] = useState(false);
+  const [moderationListings, setModerationListings] = useState<Listing[]>([]);
+  const [moderationMessage, setModerationMessage] = useState("");
+  const [moderationBusy, setModerationBusy] = useState(false);
 
   useEffect(() => {
     if (!supabase) { setAuthReady(true); return; }
@@ -190,6 +194,52 @@ export default function App() {
     else { setEditingId(null); await refreshListings(); }
   }
 
+  async function loadModeration() {
+    if (!session?.access_token) return;
+    setModerationBusy(true);
+    setModerationMessage("");
+    try {
+      const response = await fetch("/api/admin/community-listings", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Accès à la modération impossible.");
+      setModerationListings((result.listings || []) as Listing[]);
+      setModerationOpen(true);
+      setModerationMessage(`${(result.listings || []).length} annonce(s) en attente.`);
+    } catch (error) {
+      setModerationMessage(error instanceof Error ? error.message : "Erreur de modération.");
+      setModerationOpen(false);
+    } finally {
+      setModerationBusy(false);
+    }
+  }
+
+  async function moderateListing(id: string, action: "PUBLISH" | "REJECT") {
+    if (!session?.access_token) return;
+    setModerationBusy(true);
+    setModerationMessage("");
+    try {
+      const response = await fetch("/api/admin/community-listings", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ id, action }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Décision impossible.");
+      setModerationListings(current => current.filter(item => item.id !== id));
+      setModerationMessage(action === "PUBLISH" ? "Annonce publiée." : "Annonce refusée.");
+      await refreshListings();
+    } catch (error) {
+      setModerationMessage(error instanceof Error ? error.message : "Erreur de modération.");
+    } finally {
+      setModerationBusy(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#f5f8f8] text-slate-900">
       <header className="border-b border-slate-200 bg-white">
@@ -251,6 +301,42 @@ export default function App() {
         </div>}
         {authMessage && session && <p role="status" className="mt-4 text-sm text-slate-600">{authMessage}</p>}
       </section>
+
+      {session && (
+        <section id="moderation" className="mx-auto max-w-7xl px-5 pb-10">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Administration</p>
+                <h2 className="mt-1 text-xl font-extrabold">Modération des annonces</h2>
+                <p className="mt-1 text-sm text-slate-500">Accès réservé aux comptes explicitement autorisés côté serveur.</p>
+              </div>
+              <button onClick={() => void loadModeration()} disabled={moderationBusy} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-bold hover:bg-slate-50 disabled:opacity-50">
+                {moderationBusy ? "Vérification…" : moderationOpen ? "Actualiser" : "Ouvrir la modération"}
+              </button>
+            </div>
+            {moderationMessage && <p role="status" className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">{moderationMessage}</p>}
+            {moderationOpen && (moderationListings.length === 0 ? (
+              <p className="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">Aucune annonce en attente.</p>
+            ) : (
+              <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                {moderationListings.map(item => (
+                  <article key={item.id} className="rounded-xl border border-slate-200 p-4">
+                    <div className="text-xs font-bold text-teal-800">{item.category === "DIGITAL_CURRENCY" ? "Monnaie numérique" : "Colis"} · {item.listing_type === "OFFER" ? "Offre" : "Demande"}</div>
+                    <h3 className="mt-2 font-extrabold">{item.title}</h3>
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600">{item.description}</p>
+                    <p className="mt-3 text-xs text-slate-500">{item.city}, {item.country}{item.origin_city && item.destination_city ? ` · ${item.origin_city} → ${item.destination_city}` : ""}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <button onClick={() => void moderateListing(item.id, "PUBLISH")} disabled={moderationBusy} className="rounded-lg bg-teal-700 px-3 py-2 text-xs font-bold text-white disabled:opacity-50">Publier</button>
+                      <button onClick={() => void moderateListing(item.id, "REJECT")} disabled={moderationBusy} className="rounded-lg border border-red-200 px-3 py-2 text-xs font-bold text-red-700 disabled:opacity-50">Refuser</button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section id="annonces" className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-5 py-14">
