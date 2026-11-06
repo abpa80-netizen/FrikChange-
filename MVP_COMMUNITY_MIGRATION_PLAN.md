@@ -1,39 +1,44 @@
-# FrikChange — plan de migration MVP communautaire
+# FrikChange — plan de migration du service de mise en relation
 
-## Objectif
-Préparer une version publique de petites annonces communautaires générales. Les annonces d'échange de monnaie, de change, de transfert d'argent, de transport de bagages/colis et les services de voyageurs sont exclus du MVP. Aucun paiement, déblocage de contact payant, commission ou rémunération de parrainage n'est activé.
+## Positionnement validé
+FrikChange est un service digital de publication d'offres et de demandes et de mise en relation entre utilisateurs autour de deux sujets :
+1. Monnaie numérique : annonces d'offre ou de demande et prise de contact entre utilisateurs.
+2. Colis : annonces de proposition ou de demande de mise en relation au sujet d'un trajet et d'un colis.
 
-## Phase 1 — nettoyage initial effectué sur la branche de travail
-- Remplacement de l'ancien `index.html` par une entrée React propre.
-- Remplacement de l'ancienne interface par une page communautaire avec catégories générales et recherche locale de catégories.
-- Le navigateur ne charge plus l'ancien `app.js`; le script n'est plus copié dans `dist`, puis le fichier historique a été supprimé.
-- Suppression des API héritées : marketing, annonces officielles non protégées, analytics locale/démo, taux de change et support qui décrivait les services financiers et voyageurs.
-- Nettoyage de `server.ts` : retrait des routes API héritées et du catalogue de lieux de rencontre issu de l'ancien parcours.
-- Retrait du tableau de bord React d'analytics de démonstration qui dépendait de l'ancienne API.
-- Les tables Supabase `currency_listings` et `travel_listings` n'ont pas été modifiées.
+FrikChange ne calcule pas de taux de conversion, ne reçoit ni ne conserve de fonds, n'exécute aucun paiement, transfert ou échange, ne reçoit ni ne transporte de colis et ne garantit pas les accords entre utilisateurs. Cette description du rôle technique ne constitue pas une conclusion sur les obligations légales applicables ; le lancement public doit faire l'objet d'une vérification juridique et de conformité adaptée au Maroc.
 
-## Fichiers principaux modifiés
-`index.html`, `src/App.tsx`, `src/main.tsx`, `src/index.css`, `server.ts`, `package.json`.
-Ancien `app.js` supprimé. Ancien `src/components/AnalyticsDashboard.tsx` supprimé.
-Le service worker historique a été remplacé par un script de retrait qui vide les caches puis se désenregistre ; le manifeste PWA a été actualisé. Les anciens fichiers HTML autonomes et l'archive source présents dans les assets publics ont été supprimés.
+## Phase 1 — nettoyage initial
+- Ancienne interface et ancien script client généraliste retirés de l'entrée publique.
+- Anciennes API héritées de taux de change, support financier/voyageurs, marketing, annonces officielles non protégées et analytics locale supprimées.
+- Anciennes routes API associées retirées de `server.ts`.
+- Tableau de bord d'analytics de démonstration supprimé.
+- Service worker historique remplacé par un script de retrait des anciens caches et de désinscription.
+- Les anciennes tables Supabase `currency_listings` et `travel_listings` n'ont pas été modifiées.
 
-API supprimées : `api/admin-generate-marketing.js`, `api/admin-publish-announcement.js`, `api/analytics.js`, `api/exchange-rates.js`, `api/support-chat.js`.
+## Phase 2 — interface réorientée dans la branche de travail
+- Page d'accueil et métadonnées réorientées vers FrikChange.
+- Deux rubriques uniquement : `Monnaie numérique` et `Colis`.
+- Présentation explicite du parcours : publier, rechercher, prendre contact.
+- Limites du service affichées clairement : aucune conversion calculée, aucun fonds reçu ou transféré, aucun paiement exécuté, aucun colis reçu ou transporté, aucune garantie des accords.
+- Publication et contact restent désactivés tant que l'authentification, les données, la confidentialité et la modération ne sont pas intégrées et testées.
 
-## Limites importantes — application non publiable à ce stade
-- L'interface affiche des catégories, mais ne présente pas encore d'annonces issues d'une base de données.
-- Authentification, publication, édition/suppression, recherche dans les annonces, signalement et modération ne sont pas encore implémentés.
-- Le formulaire de compte et les actions de publication ne sont donc pas activés.
-- Les fichiers d'administration/analytics hérités non montés peuvent encore exister dans le dépôt et doivent être vérifiés avant de les réintroduire.
-- Aucun build local, test navigateur ou test multi-comptes n'a été exécuté dans cette étape. Aucun workflow CI GitHub n'a été trouvé pour le commit contrôlé.
-- Aucune migration Supabase, modification des variables Vercel, modification du domaine, fusion ou déploiement n'a été effectué.
+## Architecture à préparer — sans migration exécutée
+- Créer une table distincte `community_listings` ; ne pas réutiliser les tables héritées `currency_listings` et `travel_listings` sans audit et décision explicite.
+- Champs à concevoir : propriétaire, catégorie limitée à `DIGITAL_CURRENCY` ou `PARCEL_CONNECTION`, type `OFFER` ou `REQUEST`, titre, description, pays/ville, champs contextuels strictement nécessaires, statut de modération, dates.
+- Ne jamais exposer publiquement le numéro de téléphone ou les coordonnées privées. Concevoir la prise de contact avec consentement explicite et accès contrôlé.
+- RLS obligatoire : lecture publique limitée aux annonces publiées et non expirées ; lecture/édition propriétaire limitée à `auth.uid()` ; création avec propriétaire authentifié et statut initial contrôlé ; modération réservée à un rôle serveur de confiance.
+- Ne jamais exposer la clé Supabase `service_role` au navigateur. Ne pas utiliser `user_metadata` comme autorité d'administration.
+- Ajouter signalement, blocage, limites anti-spam, journal de modération et règles de conservation minimales.
 
-## Étapes suivantes
-1. Vérifier les références et fichiers résiduels, puis exécuter build/lint.
-2. Concevoir une table séparée `community_listings` avec RLS, validations et statuts de modération.
-3. Connecter Supabase Auth et implémenter les opérations CRUD, sans exposer de clé service_role.
-4. Ajouter signalements, blocage, modération serveur et protection des données personnelles.
-5. Tester deux comptes distincts, les accès publics, l'isolation des propriétaires et les cas abusifs.
-6. Préparer un déploiement de prévisualisation seulement après réussite des tests.
+## Vérifications avant toute mise en production
+- Inspecter les fichiers résiduels et les dépendances avant réintroduction.
+- Exécuter build, lint et tests automatisés.
+- Tester avec au moins deux comptes distincts : isolation des annonces, accès public, édition, suppression, confidentialité et modération.
+- Vérifier les règles de sécurité Supabase et le parcours de contact.
+- Faire vérifier les obligations locales applicables avant toute ouverture publique.
 
-## Préservation
-Le travail reste sur `mvp-community`. La branche `main`, le projet Supabase, les variables Vercel, le domaine et la production n'ont pas été modifiés.
+## État et préservation
+- Changements conservés sur la branche `mvp-community` et proposés dans la PR de revue.
+- Aucune fusion vers `main`, aucune migration Supabase, aucune modification des variables Vercel, du domaine ou du projet Vercel, aucun déploiement.
+- Le dépôt contient encore des éléments historiques non nécessairement utilisés par la nouvelle interface ; ne pas considérer l'ensemble du dépôt comme purgé.
+- Aucun build, test navigateur ou test multi-comptes n'est revendiqué pour cette étape.
