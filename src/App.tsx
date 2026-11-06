@@ -40,6 +40,9 @@ export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
+  const [authView, setAuthView] = useState<"form" | "forgot" | "reset">("form");
+  const [resetEmail, setResetEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authMessage, setAuthMessage] = useState("");
@@ -129,6 +132,37 @@ export default function App() {
       }
     } catch (error) {
       setAuthMessage(readableError(error instanceof Error ? error.message : "Une erreur est survenue."));
+    } finally { setBusy(false); }
+  }
+
+  async function handlePasswordResetRequest(event: FormEvent) {
+    event.preventDefault();
+    if (!supabase) return;
+    setBusy(true); setAuthMessage("");
+    try {
+      const redirectTo = window.location.origin;
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.trim(), { redirectTo });
+      if (error) throw error;
+      setAuthMessage("Si cette adresse correspond à un compte, un e-mail de récupération vient d'être envoyé. Vérifiez aussi vos courriers indésirables.");
+    } catch (error) {
+      setAuthMessage(readableError(error instanceof Error ? error.message : "Impossible d'envoyer l'e-mail de récupération."));
+    } finally { setBusy(false); }
+  }
+
+  async function handlePasswordUpdate(event: FormEvent) {
+    event.preventDefault();
+    if (!supabase) return;
+    setBusy(true); setAuthMessage("");
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      setNewPassword("");
+      setAuthView("form");
+      setAuthMode("login");
+      await supabase.auth.signOut();
+      setAuthMessage("Mot de passe modifié. Vous pouvez maintenant vous connecter.");
+    } catch (error) {
+      setAuthMessage(readableError(error instanceof Error ? error.message : "Impossible de modifier le mot de passe."));
     } finally { setBusy(false); }
   }
 
@@ -273,13 +307,23 @@ export default function App() {
         {!supabaseConfigReady ? <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm leading-6 text-amber-950"><strong>Configuration Supabase requise.</strong><p className="mt-1">Le site attend l'URL du projet et la clé publique anon/publishable. Configurez les variables de build SUPABASE_URL et SUPABASE_ANON_KEY dans l'environnement de déploiement. N'ajoutez jamais SUPABASE_SERVICE_ROLE_KEY au navigateur.</p></div>
         : !session ? <div className="mx-auto max-w-xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <p className="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Espace utilisateur</p>
-          <h2 className="mt-2 text-2xl font-extrabold">{authMode === "login" ? "Connexion" : "Créer un compte"}</h2>
+          <h2 className="mt-2 text-2xl font-extrabold">{authView === "forgot" ? "Récupérer mon compte" : authView === "reset" ? "Nouveau mot de passe" : authMode === "login" ? "Connexion" : "Créer un compte"}</h2>
+          {authView === "form" ? <>
           <div className="mt-5 flex gap-2 rounded-xl bg-slate-100 p-1"><button type="button" onClick={() => { setAuthMode("login"); setAuthMessage(""); }} className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold ${authMode === "login" ? "bg-white shadow-sm" : "text-slate-500"}`}>Se connecter</button><button type="button" onClick={() => { setAuthMode("signup"); setAuthMessage(""); }} className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold ${authMode === "signup" ? "bg-white shadow-sm" : "text-slate-500"}`}>Créer mon compte</button></div>
           <form onSubmit={handleAuth} className="mt-5 space-y-4">
             <label className="block text-sm font-semibold">Adresse e-mail<input required type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder="vous@exemple.com" /></label>
             <label className="block text-sm font-semibold">Mot de passe<input required minLength={6} type="password" autoComplete={authMode === "login" ? "current-password" : "new-password"} value={password} onChange={e => setPassword(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder="6 caractères minimum" /></label>
+            {authMode === "login" && <button type="button" onClick={() => { setResetEmail(email); setAuthView("forgot"); setAuthMessage(""); }} className="text-sm font-semibold text-teal-700 hover:underline">Mot de passe oublié ?</button>}
             <button disabled={busy || !authReady} className="w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white hover:bg-teal-800 disabled:opacity-50">{busy ? "Patientez…" : authMode === "login" ? "Se connecter" : "Créer mon compte"}</button>
-          </form>
+          </form></> : authView === "forgot" ? <form onSubmit={handlePasswordResetRequest} className="mt-5 space-y-4">
+            <p className="text-sm leading-6 text-slate-600">Saisissez l'adresse e-mail de votre compte. Nous vous enverrons un lien pour choisir un nouveau mot de passe.</p>
+            <label className="block text-sm font-semibold">Adresse e-mail<input required type="email" autoComplete="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" /></label>
+            <button disabled={busy} className="w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white disabled:opacity-50">{busy ? "Envoi…" : "Envoyer le lien de récupération"}</button>
+            <button type="button" onClick={() => { setAuthView("form"); setAuthMessage(""); }} className="w-full text-sm font-semibold text-slate-600 hover:underline">Retour à la connexion</button>
+          </form> : <form onSubmit={handlePasswordUpdate} className="mt-5 space-y-4">
+            <label className="block text-sm font-semibold">Nouveau mot de passe<input required minLength={8} type="password" autoComplete="new-password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder="8 caractères minimum" /></label>
+            <button disabled={busy} className="w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white disabled:opacity-50">{busy ? "Modification…" : "Enregistrer le nouveau mot de passe"}</button>
+          </form>}
           {authMessage && <p role="status" className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">{authMessage}</p>}
           <p className="mt-4 text-xs leading-5 text-slate-500">L'inscription utilise l'authentification e-mail de Supabase. Selon les réglages du projet, une confirmation par e-mail peut être nécessaire.</p>
         </div> : <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
