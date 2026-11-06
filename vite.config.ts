@@ -1,14 +1,17 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import dotenv from 'dotenv';
 import { defineConfig, loadEnv } from 'vite';
 
+dotenv.config();
+
 export default defineConfig(({ mode }) => {
-  // Only the public Supabase URL and anon/publishable key are exposed to the browser.
-  // SUPABASE_SERVICE_ROLE_KEY is deliberately never read or injected here.
-  const env = loadEnv(mode, process.cwd(), '');
-  const supabaseUrl = env.VITE_SUPABASE_URL || env.SUPABASE_URL || '';
-  const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY || '';
+  // Only allowlisted public values are copied into the browser bundle.
+  // The Supabase service-role credential is never injected into client code.
+  const viteEnv = loadEnv(mode, process.cwd(), 'VITE_');
+  const supabaseUrl = viteEnv.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '';
+  const supabaseAnonKey = viteEnv.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
 
   return {
     plugins: [react(), tailwindcss()],
