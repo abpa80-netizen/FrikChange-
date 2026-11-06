@@ -42,3 +42,28 @@ FrikChange ne calcule pas de taux de conversion, ne reçoit ni ne conserve de fo
 - Aucune fusion vers `main`, aucune migration Supabase, aucune modification des variables Vercel, du domaine ou du projet Vercel, aucun déploiement.
 - Le dépôt contient encore des éléments historiques non nécessairement utilisés par la nouvelle interface ; ne pas considérer l'ensemble du dépôt comme purgé.
 - Aucun build, test navigateur ou test multi-comptes n'est revendiqué pour cette étape.
+
+## Audit Supabase en lecture seule — 6 novembre 2026
+Projet contrôlé : `hykhktrkziotifcsufge`.
+- La table cible `community_listings` n'existe pas encore.
+- La table historique `public.listings` contient 3 lignes et mélange des champs hérités de monnaie (montants/devises), de voyageurs/colis et des coordonnées WhatsApp. Elle ne convient pas comme base publique de la nouvelle interface sans refonte et contrôle de confidentialité.
+- Les tables `currency_listings` et `travel_listings` existent mais sont vides (0 ligne chacune) ; elles restent inchangées et ne seront pas réutilisées pour la nouvelle architecture.
+- Les anciennes tables `transactions`, `commissions`, `pricing_tiers` et `payment_events` appartiennent à l'ancienne logique de paiement/déblocage. Elles ne doivent pas être appelées par le nouveau parcours.
+- Les tables publiques contrôlées disposent de politiques RLS existantes ; aucune nouvelle table n'a été créée et aucune donnée n'a été modifiée pendant cet audit.
+
+## Proposition de modèle de données — à valider avant migration
+Créer une table distincte `public.community_listings` avec :
+- `id` UUID, `owner_id` UUID FK vers `auth.users`, `category` limitée à `DIGITAL_CURRENCY` / `PARCEL_CONNECTION`, `listing_type` limité à `OFFER` / `REQUEST`.
+- `title` (2–100 caractères), `description` (10–2000 caractères), `country`, `city`, `created_at`, `updated_at`, `expires_at`.
+- Données contextuelles non financières et minimales : pour les annonces monnaie numérique, uniquement la nature du besoin et le contexte géographique ; aucun champ de taux, montant, devise contre-devise, coordonnées de paiement ou statut de transaction. Pour les annonces colis, uniquement origine/destination et dates indicatives ; aucun paiement, frais, prix, prise en charge ou confirmation d'acheminement par FrikChange.
+- `status` contrôlé côté serveur : `PENDING`, `PUBLISHED`, `PAUSED`, `REJECTED`, `EXPIRED`. Le propriétaire ne peut ni publier lui-même ni changer le statut de modération.
+- Pas de numéro WhatsApp dans les champs publics. La prise de contact doit être une fonction séparée, consentie, protégée et auditée, après décision sur le mécanisme de confidentialité.
+
+### Contrôles SQL attendus
+- RLS activée ; SELECT public uniquement pour les annonces `PUBLISHED` et non expirées ; SELECT propriétaire pour ses propres annonces ; INSERT authentifié avec `owner_id = auth.uid()` et statut forcé à `PENDING` ; UPDATE avec politiques SELECT préalable, `USING` et `WITH CHECK` propriétaires ; DELETE propriétaire.
+- Trigger `SECURITY INVOKER` pour protéger les champs immuables et la transition des statuts ; pas de fonction `SECURITY DEFINER` publique.
+- Accorder explicitement les privilèges Data API requis après vérification des paramètres du projet : depuis le 30 octobre 2026, les nouvelles tables ne sont plus exposées automatiquement à la Data API. Les GRANT et RLS sont deux contrôles complémentaires.
+- Aucun accès client à `service_role`. Le rôle de modérateur doit être établi côté serveur avec une source d'autorité non modifiable par l'utilisateur.
+- Ajouter une table privée séparée pour les signalements et une table privée pour les demandes de contact uniquement si nécessaire, avec politiques minimales et aucun accès public.
+
+**Aucune de ces propositions n'a encore été appliquée à Supabase.**
