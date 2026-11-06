@@ -36,6 +36,7 @@ Migration `create_community_listings_with_rls` appliquée au projet Supabase `hy
 ## Phase 4 — intégration frontend Supabase (branche de travail)
 - Ajout de `src/lib/supabase.ts` pour initialiser le client navigateur avec uniquement l'URL et la clé publique anon/publishable.
 - Configuration Vite pour lire les noms de variables existants `SUPABASE_URL` et `SUPABASE_ANON_KEY`, avec prise en charge des variantes `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY`. Seules l'URL et la clé publique sont injectées dans le bundle navigateur.
+- Vérification Vercel en lecture seule (sans déchiffrement) : les variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` existent en Production ; `SUPABASE_URL` et `SUPABASE_ANON_KEY` existent en Production/Preview ; `SUPABASE_SERVICE_ROLE_KEY` est une variable secrète distincte. Aucune variable n'a été modifiée.
 - `SUPABASE_SERVICE_ROLE_KEY` n'est jamais lue ni injectée dans Vite ou le code client.
 - Inscription et connexion par e-mail/mot de passe via Supabase Auth ; le message d'interface précise que la confirmation e-mail peut être requise selon les réglages Auth du projet.
 - Consultation publique des annonces `PUBLISHED` non expirées, avec recherche et filtres.
