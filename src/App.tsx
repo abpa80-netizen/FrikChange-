@@ -41,6 +41,7 @@ export default function App() {
   const [authReady, setAuthReady] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [authView, setAuthView] = useState<"form" | "forgot" | "reset">("form");
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -81,9 +82,17 @@ export default function App() {
       setSession(data.session);
       setAuthReady(true);
     });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
-      setAuthMessage("");
+      if (event === "PASSWORD_RECOVERY") {
+        setPasswordRecovery(true);
+        setAuthView("reset");
+        setAuthMessage("Choisissez votre nouveau mot de passe.");
+      } else if (event === "SIGNED_OUT") {
+        setPasswordRecovery(false);
+      } else {
+        setAuthMessage("");
+      }
     });
     return () => { active = false; listener.subscription.unsubscribe(); };
   }, []);
@@ -157,6 +166,7 @@ export default function App() {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
       setNewPassword("");
+      setPasswordRecovery(false);
       setAuthView("form");
       setAuthMode("login");
       await supabase.auth.signOut();
@@ -305,6 +315,16 @@ export default function App() {
 
       <section id="compte" className="mx-auto max-w-7xl px-5 py-12">
         {!supabaseConfigReady ? <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm leading-6 text-amber-950"><strong>Configuration Supabase requise.</strong><p className="mt-1">Le site attend l'URL du projet et la clé publique anon/publishable. Configurez les variables de build SUPABASE_URL et SUPABASE_ANON_KEY dans l'environnement de déploiement. N'ajoutez jamais SUPABASE_SERVICE_ROLE_KEY au navigateur.</p></div>
+        : passwordRecovery ? <div className="mx-auto max-w-xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <p className="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Sécurité du compte</p>
+          <h2 className="mt-2 text-2xl font-extrabold">Nouveau mot de passe</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">Le lien de récupération a été accepté. Choisissez un nouveau mot de passe pour votre compte FrikChange.</p>
+          <form onSubmit={handlePasswordUpdate} className="mt-5 space-y-4">
+            <label className="block text-sm font-semibold">Nouveau mot de passe<input required minLength={8} type="password" autoComplete="new-password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder="8 caractères minimum" /></label>
+            <button disabled={busy} className="w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white disabled:opacity-50">{busy ? "Modification…" : "Enregistrer le nouveau mot de passe"}</button>
+          </form>
+          {authMessage && <p role="status" className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">{authMessage}</p>}
+        </div>
         : !session ? <div className="mx-auto max-w-xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <p className="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Espace utilisateur</p>
           <h2 className="mt-2 text-2xl font-extrabold">{authView === "forgot" ? "Récupérer mon compte" : authView === "reset" ? "Nouveau mot de passe" : authMode === "login" ? "Connexion" : "Créer un compte"}</h2>
