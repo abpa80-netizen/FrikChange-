@@ -219,7 +219,9 @@ export default function App() {
     setTitle(""); setDescription(""); setCity("");
     setShowComposer(false);
     setLoadError("Annonce envoyée à la modération. Elle sera visible publiquement après validation.");
+    setModerationMessage("");
     await refreshListings();
+    if (moderationOpen) await loadModeration();
   }
 
   async function handleDelete(id: string) {
