@@ -13,3 +13,129 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   outline: 3px solid rgba(13, 148, 136, .45);
   outline-offset: 2px;
 }
+
+/* FrikChange — identité visuelle communautaire */
+:root {
+  color-scheme: dark;
+  --fc-bg: #07111f;
+  --fc-panel: #101e31;
+  --fc-panel-soft: #14243a;
+  --fc-border: #263951;
+  --fc-text: #edf4fb;
+  --fc-muted: #a9b8ca;
+  --fc-accent: #55d6c2;
+}
+body {
+  background: var(--fc-bg);
+  color: var(--fc-text);
+}
+main.min-h-screen {
+  background: radial-gradient(ellipse at 50% -15%, #16334a 0%, var(--fc-bg) 48%) !important;
+  color: var(--fc-text) !important;
+}
+main > header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(8, 20, 35, .94) !important;
+  border-color: var(--fc-border) !important;
+  backdrop-filter: blur(16px);
+}
+main > header a,
+main > header strong { color: var(--fc-text); }
+main > header small,
+main > header nav { color: var(--fc-muted) !important; }
+main > header nav a:hover { color: var(--fc-accent) !important; }
+main > header .bg-teal-700 {
+  background: linear-gradient(135deg, #1a9e91, #126f78) !important;
+}
+main > section#accueil {
+  border-bottom: 1px solid rgba(120, 160, 190, .16);
+  background: radial-gradient(ellipse at 82% 20%, #164b55 0%, #0b2032 42%, #07111f 100%) !important;
+}
+main > section#accueil h1 { letter-spacing: -.045em; }
+main > section#accueil > div > div:last-child {
+  background: rgba(17, 38, 57, .72) !important;
+  border-color: rgba(117, 190, 194, .24) !important;
+  box-shadow: 0 24px 70px rgba(0,0,0,.2);
+}
+main > section#compte,
+main > section#moderation,
+main > section#fonctionnement { color: var(--fc-text); }
+main .bg-white {
+  background-color: var(--fc-panel) !important;
+}
+main .bg-slate-50,
+main .bg-slate-100 {
+  background-color: var(--fc-panel-soft) !important;
+}
+main .border-slate-200,
+main .border-slate-300 {
+  border-color: var(--fc-border) !important;
+}
+main .text-slate-900,
+main .text-slate-800 { color: #f2f7fc !important; }
+main .text-slate-700,
+main .text-slate-600,
+main .text-slate-500 { color: var(--fc-muted) !important; }
+main .text-teal-800,
+main .text-teal-700 { color: #70e2d0 !important; }
+main .bg-teal-50 { background-color: rgba(34, 170, 151, .14) !important; }
+main .bg-amber-50 { background-color: rgba(180, 126, 35, .18) !important; }
+main input,
+main select,
+main textarea {
+  background-color: #0b192b !important;
+  color: var(--fc-text) !important;
+  border-color: #344a63 !important;
+}
+main input::placeholder,
+main textarea::placeholder { color: #8295aa; }
+main button,
+main a { transition: background-color .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+main button:disabled { cursor: not-allowed; }
+main button:not(:disabled):hover { transform: translateY(-1px); }
+main .bg-teal-700 {
+  background: linear-gradient(135deg, #168f86, #116c78) !important;
+  box-shadow: 0 8px 22px rgba(12, 137, 126, .18);
+}
+main .bg-teal-700:hover { filter: brightness(1.12); }
+main #compte .rounded-3xl,
+main #moderation .rounded-2xl {
+  border-color: var(--fc-border) !important;
+  box-shadow: 0 20px 55px rgba(0,0,0,.18);
+}
+main #compte article,
+main #moderation article,
+main #annonces article {
+  background: linear-gradient(155deg, #13243a, #0d1a2b) !important;
+  border-color: #2a4058 !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.13);
+}
+main #compte article:hover,
+main #moderation article:hover,
+main #annonces article:hover {
+  border-color: rgba(85, 214, 194, .48) !important;
+  box-shadow: 0 18px 38px rgba(0,0,0,.22);
+}
+main #annonces {
+  background: rgba(10, 24, 40, .78) !important;
+  border-color: var(--fc-border) !important;
+}
+main #fonctionnement > div:last-child {
+  background: var(--fc-panel) !important;
+  border: 1px solid var(--fc-border);
+}
+main footer {
+  background: #050c16 !important;
+  border-top: 1px solid var(--fc-border);
+}
+main .border-t { border-color: var(--fc-border) !important; }
+main .border-dashed { border-color: #3b526a !important; }
+@media (max-width: 640px) {
+  main > header > div { padding-top: .75rem; padding-bottom: .75rem; }
+  main > section#accueil > div { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+  main > section#accueil h1 { font-size: clamp(2.15rem, 10vw, 3rem); }
+  main #compte { padding-top: 2rem; padding-bottom: 2rem; }
+  main #annonces > div { padding-top: 3rem; padding-bottom: 3rem; }
+}
