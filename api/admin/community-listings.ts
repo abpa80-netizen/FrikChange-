@@ -17,10 +17,18 @@ export default async function handler(req: Req, res: Res) {
   const key = process.env["SUPABASE_" + "SERVICE_ROLE_KEY"];
   if (!url || !key) return res.status(503).json({ error: "Service de modération non configuré." });
 
-  const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-  const { data: auth, error: authError } = await db.auth.getUser(token);
+  const publicUrl = process.env.VITE_SUPABASE_URL;
+  const publicKey = process.env.VITE_SUPABASE_ANON_KEY;
+  if (!publicUrl || !publicKey || publicUrl !== url)
+    return res.status(503).json({ error: "Configuration Supabase incohérente entre le client et le serveur." });
+
+  const authClient = createClient(publicUrl, publicKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data: auth, error: authError } = await authClient.auth.getUser(token);
   if (authError || !auth.user) return res.status(401).json({ error: "Session invalide." });
 
+  const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   const { data: allowed, error: roleError } = await db.from("community_admins")
     .select("user_id").eq("user_id", auth.user.id).eq("is_active", true).maybeSingle();
   if (roleError) return res.status(503).json({ error: "Vérification des droits impossible." });
