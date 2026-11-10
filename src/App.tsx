@@ -31,7 +31,7 @@ const CATEGORY_LABELS: Record<Category, string> = {
   OTHER: "Autres annonces",
 };
 function categoryLabel(category: string) { return CATEGORY_LABELS[category as Category] || "Autres annonces"; }
-const RESTRICTED_CONTENT = /(?:\b(?:wave|orange\s*money|western\s*union|moneygram|mtn\s*momo|moov\s*money|virement|transfert\s+d['’]?argent|transfert\s+mobile|taux\s+de\s+change|conversion\s+de\s+devise|échange\s+de\s+devise|monnaie\s+numérique|crypto(?:monnaie)?|devise|cash|colis|bagages?|valises?)\b|\b\d+(?:[.,]\d+)?\s*(?:dh|dhs|mad|fcfa|xof|xaf|eur|usd|dollars?|dirhams?)\b|transport\s+de\s+(?:bagages?|colis|valises?))/i;
+const RESTRICTED_CONTENT = /(?:\b(?:wave|orange\s*money|western\s*union|moneygram|mtn\s*momo|moov\s*money|mouv|virement|transfert\s+d['’]?argent|transfert\s+mobile|taux\s+de\s+change|conversion\s+de\s+devise|échange\s+de\s+devise|monnaie\s+numérique|crypto(?:monnaie)?|devise|cash|colis|bagages?|valises?)\b|\b\d+(?:[.,]\d+)?\s*(?:dh|dhs|mad|fcfa|xof|xaf|eur|usd|dollars?|dirhams?)\b|transport\s+de\s+(?:bagages?|colis|valises?))/i;
 function contentPolicyMessage(value: string) {
   return RESTRICTED_CONTENT.test(value) ? "Cette annonce semble contenir une proposition financière, un transfert d'argent ou du transport de bagages. Ces activités ne sont pas autorisées sur FrikChange." : "";
 }
