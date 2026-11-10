@@ -306,6 +306,11 @@ export default function App() {
             <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-700 text-xl font-extrabold text-white">F</span>
             <span><strong className="block text-xl font-extrabold">FrikChange</strong><small className="text-xs text-slate-500">Annonces et mise en relation</small></span>
           </a>
+          <nav aria-label="Navigation principale" className="hidden items-center gap-6 text-sm font-semibold text-slate-600 lg:flex">
+            <a href="#annonces" className="transition hover:text-teal-700">Explorer</a>
+            <a href="#fonctionnement" className="transition hover:text-teal-700">Comment ça marche</a>
+            <a href="#compte" className="transition hover:text-teal-700">{session ? "Mon espace" : "Créer un compte"}</a>
+          </nav>
           {session ? <div className="flex items-center gap-3"><span className="hidden max-w-44 truncate text-xs text-slate-500 sm:block">{session.user.email}</span><button onClick={handleSignOut} disabled={busy} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Déconnexion</button></div> : <a href="#compte" className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white hover:bg-teal-800">Se connecter</a>}
         </div>
       </header>
