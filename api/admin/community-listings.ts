@@ -54,7 +54,7 @@ export default async function handler(req: Req, res: Res) {
       .select("category,title,description").eq("id", id).eq("status", "PENDING").maybeSingle();
     if (candidateError) return res.status(500).json({ error: "Vérification du contenu impossible." });
     if (!candidate) return res.status(409).json({ error: "Annonce déjà traitée. Actualisez la liste." });
-    const restricted = /(?:\\b(?:wave|orange\\s*money|western\\s*union|moneygram|mtn\\s*momo|moov\\s*money|virement|devise|cash|colis|bagages?|valises?|crypto(?:monnaie)?)\\b|transfert\\s+(?:d['’]?argent|mobile)|taux\\s+de\\s+change|conversion\\s+de\\s+devise|échange\\s+de\\s+devise|\\b\\d+(?:[.,]\\d+)?\\s*(?:dh|dhs|mad|fcfa|xof|xaf|eur|usd|dollars?|dirhams?)\\b)/i;
+    const restricted = /(?:\\b(?:wave|orange\\s*money|western\\s*union|moneygram|mtn\\s*momo|moov\\s*money|mouv|virement|devise|cash|colis|bagages?|valises?|crypto(?:monnaie)?)\\b|transfert\\s+(?:d['’]?argent|mobile)|taux\\s+de\\s+change|conversion\\s+de\\s+devise|échange\\s+de\\s+devise|\\b\\d+(?:[.,]\\d+)?\\s*(?:dh|dhs|mad|fcfa|xof|xaf|eur|usd|dollars?|dirhams?)\\b)/i;
     const allowedCategories = ["COMMUNITY_HELP", "LOCAL_SERVICES", "GOODS_DONATIONS", "COMMUNITY_EVENTS", "OTHER"];
     if (!allowedCategories.includes(candidate.category) || restricted.test(`${candidate.title} ${candidate.description}`)) {
       return res.status(422).json({ error: "Cette annonce ne respecte pas les règles de FrikChange et ne peut pas être publiée." });
