@@ -51,6 +51,7 @@ function statusLabel(status: Listing["status"]) {
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [activeTab, setActiveTab] = useState<"home" | "explore" | "profile">("home");
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [authView, setAuthView] = useState<"form" | "forgot" | "reset">("form");
@@ -306,15 +307,10 @@ export default function App() {
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4">
           <a href="#accueil" className="flex items-center gap-3" aria-label="FrikChange, accueil">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-700 text-xl font-extrabold text-white">F</span>
-            <span><strong className="block text-xl font-extrabold">FrikChange</strong><small className="text-xs text-slate-500">Annonces et mise en relation</small></span>
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 text-2xl font-black text-white shadow-lg shadow-cyan-500/20">F</span>
+            <span><strong className="block text-2xl font-black tracking-tight text-white">FrikChange</strong><small className="text-[10px] font-bold uppercase tracking-[.2em] text-cyan-300">Annonces & communauté</small></span>
           </a>
-          <nav aria-label="Navigation principale" className="hidden items-center gap-6 text-sm font-semibold text-slate-600 lg:flex">
-            <button onClick={() => setActiveTab("home")}>Accueil</button>
-            <button onClick={() => setActiveTab("explore")}>Explorer</button>
-            <button onClick={() => setActiveTab("profile")}>{session ? "Mon espace" : "Connexion"}</button>
-          </nav>
-          {session ? <div className="flex items-center gap-3"><span className="hidden max-w-44 truncate text-xs text-slate-500 sm:block">{session.user.email}</span><button onClick={handleSignOut} disabled={busy} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Déconnexion</button></div> : <a href="#compte" className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white hover:bg-teal-800">Se connecter</a>}
+          <span className="hidden text-xs font-semibold tracking-wide text-slate-400 sm:block">ANNONCES COMMUNAUTAIRES · MAROC</span>
         </div>
       </header>
 
@@ -329,11 +325,23 @@ export default function App() {
           <div className="rounded-3xl border border-cyan-300/20 bg-gradient-to-br from-cyan-400/15 via-white/5 to-blue-500/10 p-6 shadow-2xl shadow-cyan-950/30">
             <div className="mb-5 flex items-center justify-between"><span className="text-xs font-bold uppercase tracking-[.2em] text-teal-200">La communauté en mouvement</span><span className="rounded-full border border-teal-200/30 px-3 py-1 text-xs text-teal-100">Maroc</span></div>
             <div className="grid grid-cols-2 gap-3">
-              {[["🤝","Entraide","COMMUNITY_HELP"],["🛠️","Services","LOCAL_SERVICES"],["🎁","Objets & dons","GOODS_DONATIONS"],["🎉","Événements","COMMUNITY_EVENTS"]].map(([icon,label,key]) => <button key={key} onClick={() => { setFilterCategory(key as Category); setActiveTab("explore"); }} className="group rounded-2xl border border-white/10 bg-slate-950/45 p-4 text-left transition hover:-translate-y-1 hover:border-teal-300/60 hover:bg-teal-400/10"><span className="text-3xl">{icon}</span><span className="mt-3 block text-sm font-bold text-white">{label}</span><span className="mt-1 block text-xs text-slate-400">Découvrir →</span></button>)}
+              {[
+                {label:"Entraide",key:"COMMUNITY_HELP",image:"https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=700&q=85"},
+                {label:"Services",key:"LOCAL_SERVICES",image:"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=700&q=85"},
+                {label:"Objets & dons",key:"GOODS_DONATIONS",image:"https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=700&q=85"},
+                {label:"Événements",key:"COMMUNITY_EVENTS",image:"https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=700&q=85"}
+              ].map(item => <button key={item.key} onClick={() => { setFilterCategory(item.key as Category); setActiveTab("explore"); }} className="group relative min-h-32 overflow-hidden rounded-2xl border border-white/15 text-left shadow-lg transition hover:-translate-y-1 hover:border-cyan-300/70"><img src={item.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-110"/><span className="absolute inset-0 bg-gradient-to-t from-[#061321] via-[#061321]/35 to-transparent"/><span className="absolute bottom-3 left-3 right-3 text-sm font-extrabold text-white drop-shadow">{item.label}<span className="float-right text-cyan-300">›</span></span></button>)}
             </div>
             <p className="mt-5 text-xs leading-5 text-slate-400">Des annonces utiles, vérifiées avant publication. Aucun paiement ni échange d’argent sur la plateforme.</p>
           </div>
   
+        </div>
+      </section>
+
+      <section id="accueil-annonces" hidden={activeTab !== "home"} className="bg-[#071321] px-4 py-7 text-white sm:px-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-4 flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cyan-300">À découvrir</p><h2 className="mt-1 text-xl font-black sm:text-2xl">Annonces de la communauté</h2></div><button onClick={() => setActiveTab("explore")} className="shrink-0 rounded-full border border-white/20 px-3 py-2 text-xs font-bold text-cyan-200">Tout voir ›</button></div>
+          {publicListings.length === 0 ? <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-slate-300">Les premières annonces validées apparaîtront ici.</div> : <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">{(["COMMUNITY_HELP","LOCAL_SERVICES","GOODS_DONATIONS","COMMUNITY_EVENTS","OTHER"] as Category[]).map(cat => { const item=publicListings.find(x=>x.category===cat); if(!item) return null; const image=cat==="COMMUNITY_HELP"?"https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=800&q=85":cat==="LOCAL_SERVICES"?"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=85":cat==="GOODS_DONATIONS"?"https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=800&q=85":cat==="COMMUNITY_EVENTS"?"https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=85":"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=85"; return <button key={cat} onClick={()=>setSelectedListing(item)} className="group overflow-hidden rounded-2xl border border-white/10 bg-[#11243a] text-left shadow-lg transition hover:-translate-y-1 hover:border-cyan-300/60"><div className="relative h-28 overflow-hidden sm:h-36"><img src={image} alt="" loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105"/><span className="absolute left-2 top-2 rounded-full bg-cyan-400 px-2 py-1 text-[9px] font-extrabold text-slate-950">{categoryLabel(cat)}</span></div><div className="p-3"><p className="line-clamp-2 min-h-10 text-xs font-extrabold text-white">{item.title}</p><p className="mt-2 truncate text-[10px] text-slate-400">⌖ {item.city}, {item.country}</p><span className="mt-2 block text-[10px] font-bold text-cyan-300">Voir l’annonce ›</span></div></button>; })}</div>}
         </div>
       </section>
 
@@ -371,7 +379,7 @@ export default function App() {
           {authMessage && <p role="status" className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">{authMessage}</p>}
           <p className="mt-4 text-xs leading-5 text-slate-500">L'inscription utilise l'authentification e-mail de Supabase. Selon les réglages du projet, une confirmation par e-mail peut être nécessaire.</p>
         </div> : <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Votre espace</p><h2 className="mt-1 text-2xl font-extrabold">Mes annonces</h2></div><button onClick={() => setShowComposer(!showComposer)} className="rounded-xl bg-teal-700 px-4 py-3 text-sm font-bold text-white hover:bg-teal-800">{showComposer ? "Fermer" : "+ Publier une annonce"}</button></div>
+          <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Votre espace</p><h2 className="mt-1 text-2xl font-extrabold">Mes annonces</h2><p className="mt-1 text-xs text-slate-500">{session.user.email}</p></div><div className="flex gap-2"><button onClick={handleSignOut} disabled={busy} className="rounded-xl border border-slate-300 px-3 py-3 text-xs font-bold">Déconnexion</button><button onClick={() => setShowComposer(!showComposer)} className="rounded-xl bg-teal-700 px-4 py-3 text-sm font-bold text-white hover:bg-teal-800">{showComposer ? "Fermer" : "+ Publier"}</button></div></div>
           {showComposer && <form onSubmit={handleCreateListing} className="mt-6 grid gap-4 rounded-2xl bg-slate-50 p-5 md:grid-cols-2">
             <label className="text-sm font-semibold">Rubrique<select value={category} onChange={e => setCategory(e.target.value as Category)} className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"><option value="COMMUNITY_HELP">Entraide communautaire</option><option value="LOCAL_SERVICES">Services de proximité</option><option value="GOODS_DONATIONS">Objets & dons</option><option value="COMMUNITY_EVENTS">Événements communautaires</option><option value="OTHER">Autres annonces</option></select></label>
             <label className="text-sm font-semibold">Type d'annonce<select value={listingType} onChange={e => setListingType(e.target.value as ListingType)} className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"><option value="OFFER">Offre</option><option value="REQUEST">Demande</option></select></label>
@@ -440,11 +448,13 @@ export default function App() {
         <div className="rounded-2xl bg-slate-50 p-5"><h2 className="text-base font-extrabold">Limites du service</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-600"><li>FrikChange ne propose aucun échange d’argent, transfert, paiement ni conversion de devises.</li><li>FrikChange ne prend pas en charge le transport de bagages ou de colis.</li><li>FrikChange ne garantit ni les personnes, ni les accords, ni les opérations convenues entre utilisateurs.</li></ul><p className="mt-4 border-t border-slate-200 pt-4 text-xs leading-5 text-slate-500">Les utilisateurs doivent respecter les lois applicables. Les annonces interdites, frauduleuses ou dangereuses peuvent être retirées. Cette description technique ne remplace pas une vérification juridique et réglementaire locale.</p></div>
       </section>
 
+      {selectedListing && <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="dialog" aria-modal="true" aria-label="Détail de l’annonce" onClick={() => setSelectedListing(null)}><div className="max-h-[88vh] w-full max-w-xl overflow-y-auto rounded-t-3xl border border-cyan-300/20 bg-[#0c1b2d] text-white shadow-2xl sm:rounded-3xl" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between border-b border-white/10 p-4"><span className="text-xs font-bold uppercase tracking-widest text-cyan-300">Détail de l’annonce</span><button onClick={() => setSelectedListing(null)} className="rounded-full bg-white/10 px-3 py-1 text-lg">×</button></div><div className="p-5"><span className="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-200">{categoryLabel(selectedListing.category)} · {selectedListing.listing_type==="OFFER"?"Offre":"Demande"}</span><h2 className="mt-4 text-2xl font-black">{selectedListing.title}</h2><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-300">{selectedListing.description}</p><p className="mt-5 border-t border-white/10 pt-4 text-xs text-slate-400">⌖ {selectedListing.city}, {selectedListing.country}</p><p className="mt-4 rounded-xl bg-white/5 p-3 text-xs leading-5 text-slate-400">Contact direct non activé. FrikChange facilite la découverte des annonces et la mise en relation, sans paiement ni transaction sur la plateforme.</p></div></div></div>}
+
       <nav aria-label="Navigation mobile" className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#071321]/95 px-3 pb-[max(env(safe-area-inset-bottom),.65rem)] pt-2 shadow-[0_-12px_35px_rgba(0,0,0,.28)] backdrop-blur-xl">
         <div className="mx-auto grid max-w-xl grid-cols-3 gap-2">
           <button onClick={() => setActiveTab("home")} className={`rounded-xl px-2 py-2 text-xs font-bold ${activeTab === "home" ? "bg-teal-400/15 text-teal-300" : "text-slate-400"}`}><span className="block text-xl">⌂</span>Accueil</button>
           <button onClick={() => setActiveTab("explore")} className={`rounded-xl px-2 py-2 text-xs font-bold ${activeTab === "explore" ? "bg-teal-400/15 text-teal-300" : "text-slate-400"}`}><span className="block text-xl">▦</span>Explorer</button>
-          <button onClick={() => { setActiveTab("profile"); if (session) setShowComposer(true); }} className={`rounded-xl px-2 py-2 text-xs font-bold ${activeTab === "profile" ? "bg-teal-400/15 text-teal-300" : "text-slate-400"}`}><span className="block text-xl">{session ? "+" : "♙"}</span>{session ? "Publier" : "Profil"}</button>
+          <button onClick={() => { setActiveTab("profile"); setShowComposer(false); }} className={`rounded-xl px-2 py-2 text-xs font-bold ${activeTab === "profile" ? "bg-teal-400/15 text-teal-300" : "text-slate-400"}`}><span className="block text-xl">♙</span>Profil</button>
         </div>
       </nav>
 
