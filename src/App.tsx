@@ -333,11 +333,7 @@ export default function App() {
             </div>
             <p className="mt-5 text-xs leading-5 text-slate-400">Des annonces utiles, vérifiées avant publication. Aucun paiement ni échange d’argent sur la plateforme.</p>
           </div>
-            <p className="text-sm font-semibold text-teal-200">Le rôle de FrikChange</p>
-            <ul className="mt-5 space-y-4 text-sm leading-6 text-slate-200">
-              <li>✓　Publier des offres et des demandes</li><li>✓　Consulter les annonces validées</li><li>✓　Modération avant publication</li><li>✓　Accès aux annonces personnelles après connexion</li>
-            </ul>
-          </div>
+  
         </div>
       </section>
 
