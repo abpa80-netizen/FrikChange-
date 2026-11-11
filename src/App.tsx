@@ -50,6 +50,7 @@ function statusLabel(status: Listing["status"]) {
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
+  const [activeTab, setActiveTab] = useState<"home" | "explore" | "profile">("home");
   const [authReady, setAuthReady] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [authView, setAuthView] = useState<"form" | "forgot" | "reset">("form");
@@ -301,7 +302,7 @@ export default function App() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f8f8] text-slate-900">
+    <main className="min-h-screen bg-[#f5f8f8] pb-24 text-slate-900">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4">
           <a href="#accueil" className="flex items-center gap-3" aria-label="FrikChange, accueil">
@@ -309,23 +310,29 @@ export default function App() {
             <span><strong className="block text-xl font-extrabold">FrikChange</strong><small className="text-xs text-slate-500">Annonces et mise en relation</small></span>
           </a>
           <nav aria-label="Navigation principale" className="hidden items-center gap-6 text-sm font-semibold text-slate-600 lg:flex">
-            <a href="#annonces" className="transition hover:text-teal-700">Explorer</a>
-            <a href="#fonctionnement" className="transition hover:text-teal-700">Comment ça marche</a>
-            <a href="#compte" className="transition hover:text-teal-700">{session ? "Mon espace" : "Créer un compte"}</a>
+            <button onClick={() => setActiveTab("home")}>Accueil</button>
+            <button onClick={() => setActiveTab("explore")}>Explorer</button>
+            <button onClick={() => setActiveTab("profile")}>{session ? "Mon espace" : "Connexion"}</button>
           </nav>
           {session ? <div className="flex items-center gap-3"><span className="hidden max-w-44 truncate text-xs text-slate-500 sm:block">{session.user.email}</span><button onClick={handleSignOut} disabled={busy} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Déconnexion</button></div> : <a href="#compte" className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white hover:bg-teal-800">Se connecter</a>}
         </div>
       </header>
 
-      <section id="accueil" className="bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white">
+      <section id="accueil" hidden={activeTab !== "home"} className="bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-[1.2fr_.8fr] md:items-center md:py-24">
           <div>
             <p className="mb-5 inline-flex rounded-full border border-teal-300/30 bg-teal-300/10 px-3 py-1.5 text-xs font-semibold text-teal-200">La mise en relation commence par une annonce</p>
             <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">Trouvez le bon contact pour votre <span className="text-teal-300">besoin.</span></h1>
             <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300">Publiez une offre ou une demande utile à la communauté : entraide, services de proximité, objets, dons et événements. Chaque annonce est vérifiée avant sa mise en ligne.</p>
-            <a href="#annonces" className="mt-8 inline-flex rounded-xl bg-teal-400 px-5 py-3 font-bold text-slate-950 hover:bg-teal-300">Voir les annonces ↓</a>
+            <button onClick={() => setActiveTab("explore")} className="mt-7 inline-flex rounded-xl bg-teal-400 px-5 py-3 font-bold text-slate-950 hover:bg-teal-300">Explorer les annonces →</button>
           </div>
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <div className="rounded-3xl border border-cyan-300/20 bg-gradient-to-br from-cyan-400/15 via-white/5 to-blue-500/10 p-6 shadow-2xl shadow-cyan-950/30">
+            <div className="mb-5 flex items-center justify-between"><span className="text-xs font-bold uppercase tracking-[.2em] text-teal-200">La communauté en mouvement</span><span className="rounded-full border border-teal-200/30 px-3 py-1 text-xs text-teal-100">Maroc</span></div>
+            <div className="grid grid-cols-2 gap-3">
+              {[["🤝","Entraide","COMMUNITY_HELP"],["🛠️","Services","LOCAL_SERVICES"],["🎁","Objets & dons","GOODS_DONATIONS"],["🎉","Événements","COMMUNITY_EVENTS"]].map(([icon,label,key]) => <button key={key} onClick={() => { setFilterCategory(key as Category); setActiveTab("explore"); }} className="group rounded-2xl border border-white/10 bg-slate-950/45 p-4 text-left transition hover:-translate-y-1 hover:border-teal-300/60 hover:bg-teal-400/10"><span className="text-3xl">{icon}</span><span className="mt-3 block text-sm font-bold text-white">{label}</span><span className="mt-1 block text-xs text-slate-400">Découvrir →</span></button>)}
+            </div>
+            <p className="mt-5 text-xs leading-5 text-slate-400">Des annonces utiles, vérifiées avant publication. Aucun paiement ni échange d’argent sur la plateforme.</p>
+          </div>
             <p className="text-sm font-semibold text-teal-200">Le rôle de FrikChange</p>
             <ul className="mt-5 space-y-4 text-sm leading-6 text-slate-200">
               <li>✓　Publier des offres et des demandes</li><li>✓　Consulter les annonces validées</li><li>✓　Modération avant publication</li><li>✓　Accès aux annonces personnelles après connexion</li>
@@ -334,7 +341,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="compte" className="mx-auto max-w-7xl px-5 py-12">
+      <section id="compte" hidden={activeTab !== "profile"} className="mx-auto max-w-7xl px-5 py-8">
         {!supabaseConfigReady ? <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm leading-6 text-amber-950"><strong>Configuration Supabase requise.</strong><p className="mt-1">Le site attend l'URL du projet et la clé publique anon/publishable. Configurez les variables de build SUPABASE_URL et SUPABASE_ANON_KEY dans l'environnement de déploiement. N'ajoutez jamais SUPABASE_SERVICE_ROLE_KEY au navigateur.</p></div>
         : passwordRecovery ? <div className="mx-auto max-w-xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <p className="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Sécurité du compte</p>
@@ -388,7 +395,7 @@ export default function App() {
       </section>
 
       {session && (
-        <section id="moderation" className="mx-auto max-w-7xl px-5 pb-10">
+        <section id="moderation" hidden={activeTab !== "profile"} className="mx-auto max-w-7xl px-5 pb-8">
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -423,21 +430,29 @@ export default function App() {
         </section>
       )}
 
-      <section id="annonces" className="border-y border-slate-200 bg-white">
+      <section id="annonces" hidden={activeTab !== "explore"} className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-5 py-14">
           <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Annonces validées</p><h2 className="mt-2 text-3xl font-extrabold">Explorer les annonces</h2><p className="mt-2 text-sm text-slate-600">Seules les annonces publiées et non expirées apparaissent ici.</p></div><span className="rounded-full bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600">{visibleListings.length} annonce(s)</span></div>
           <div className="mt-7 grid gap-3 sm:grid-cols-3"><input aria-label="Rechercher une annonce" value={query} onChange={e => setQuery(e.target.value)} placeholder="Mot-clé, ville…" className="rounded-xl border border-slate-300 px-4 py-3 sm:col-span-1" /><select aria-label="Filtrer par rubrique" value={filterCategory} onChange={e => setFilterCategory(e.target.value as "ALL" | Category)} className="rounded-xl border border-slate-300 px-4 py-3"><option value="ALL">Toutes les rubriques</option><option value="COMMUNITY_HELP">Entraide communautaire</option><option value="LOCAL_SERVICES">Services de proximité</option><option value="GOODS_DONATIONS">Objets & dons</option><option value="COMMUNITY_EVENTS">Événements communautaires</option><option value="OTHER">Autres annonces</option></select><select aria-label="Filtrer par type" value={filterType} onChange={e => setFilterType(e.target.value as "ALL" | ListingType)} className="rounded-xl border border-slate-300 px-4 py-3"><option value="ALL">Offres et demandes</option><option value="OFFER">Offres</option><option value="REQUEST">Demandes</option></select></div>
           {loadError && <p role="status" className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">{loadError}</p>}
-          {visibleListings.length === 0 ? <p className="mt-7 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center text-sm text-slate-500">{publicListings.length === 0 ? "Aucune annonce publiée pour le moment." : "Aucune annonce ne correspond à votre recherche."}</p> : <div className="mt-7 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{visibleListings.map(item => <article key={item.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex flex-wrap gap-2"><span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-bold text-teal-800">{categoryLabel(item.category)}</span><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{item.listing_type === "OFFER" ? "Offre" : "Demande"}</span></div><h3 className="mt-4 text-lg font-extrabold">{item.title}</h3><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600">{item.description}</p><p className="mt-4 text-xs font-semibold text-slate-500">{item.city}, {item.country}</p><p className="mt-4 border-t border-slate-100 pt-3 text-xs text-slate-500">Contact direct non activé à cette étape. Aucune coordonnée privée n'est affichée.</p></article>)}</div>}
+          {visibleListings.length === 0 ? <p className="mt-7 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center text-sm text-slate-500">{publicListings.length === 0 ? "Aucune annonce publiée pour le moment." : "Aucune annonce ne correspond à votre recherche."}</p> : <div className="mt-7 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{visibleListings.map(item => <article key={item.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex flex-wrap gap-2"><span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-bold text-teal-800">{categoryLabel(item.category)}</span><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{item.listing_type === "OFFER" ? "Offre" : "Demande"}</span></div><h3 className="mt-4 text-lg font-extrabold">{item.title}</h3><details className="mt-2 group"><summary className="cursor-pointer list-none text-xs font-bold text-teal-300">Voir les détails <span className="ml-1 group-open:hidden">＋</span><span className="ml-1 hidden group-open:inline">−</span></summary><p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-300">{item.description}</p></details><p className="mt-4 text-xs font-semibold text-slate-500">{item.city}, {item.country}</p><p className="mt-4 border-t border-slate-100 pt-3 text-xs text-slate-500">Contact direct non activé à cette étape. Aucune coordonnée privée n'est affichée.</p></article>)}</div>}
         </div>
       </section>
 
-      <section id="fonctionnement" className="mx-auto grid max-w-7xl gap-8 px-5 py-12 md:grid-cols-2">
+      <section id="fonctionnement" hidden={activeTab !== "home"} className="mx-auto grid max-w-7xl gap-8 px-5 py-8 md:grid-cols-2">
         <div><h2 className="text-2xl font-extrabold">Comment fonctionne le service ?</h2><ol className="mt-5 space-y-4 text-sm leading-6 text-slate-600"><li><strong className="text-slate-900">1. Créer un compte.</strong> Inscrivez-vous avec votre adresse e-mail.</li><li><strong className="text-slate-900">2. Publier.</strong> Votre annonce est soumise à modération.</li><li><strong className="text-slate-900">3. Consulter.</strong> Les annonces validées sont visibles dans le catalogue public.</li></ol></div>
         <div className="rounded-2xl bg-slate-50 p-5"><h2 className="text-base font-extrabold">Limites du service</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-600"><li>FrikChange ne propose aucun échange d’argent, transfert, paiement ni conversion de devises.</li><li>FrikChange ne prend pas en charge le transport de bagages ou de colis.</li><li>FrikChange ne garantit ni les personnes, ni les accords, ni les opérations convenues entre utilisateurs.</li></ul><p className="mt-4 border-t border-slate-200 pt-4 text-xs leading-5 text-slate-500">Les utilisateurs doivent respecter les lois applicables. Les annonces interdites, frauduleuses ou dangereuses peuvent être retirées. Cette description technique ne remplace pas une vérification juridique et réglementaire locale.</p></div>
       </section>
 
-      <footer className="bg-slate-950 px-5 py-8 text-center text-sm text-slate-400"><strong className="text-white">FrikChange</strong><p className="mt-2">Service digital d'annonces et de mise en relation.</p><p className="mt-3 text-xs">Version de test — fonctionnalité de contact direct non activée.</p></footer>
+      <nav aria-label="Navigation mobile" className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#071321]/95 px-3 pb-[max(env(safe-area-inset-bottom),.65rem)] pt-2 shadow-[0_-12px_35px_rgba(0,0,0,.28)] backdrop-blur-xl">
+        <div className="mx-auto grid max-w-xl grid-cols-3 gap-2">
+          <button onClick={() => setActiveTab("home")} className={`rounded-xl px-2 py-2 text-xs font-bold ${activeTab === "home" ? "bg-teal-400/15 text-teal-300" : "text-slate-400"}`}><span className="block text-xl">⌂</span>Accueil</button>
+          <button onClick={() => setActiveTab("explore")} className={`rounded-xl px-2 py-2 text-xs font-bold ${activeTab === "explore" ? "bg-teal-400/15 text-teal-300" : "text-slate-400"}`}><span className="block text-xl">▦</span>Explorer</button>
+          <button onClick={() => { setActiveTab("profile"); if (session) setShowComposer(true); }} className={`rounded-xl px-2 py-2 text-xs font-bold ${activeTab === "profile" ? "bg-teal-400/15 text-teal-300" : "text-slate-400"}`}><span className="block text-xl">{session ? "+" : "♙"}</span>{session ? "Publier" : "Profil"}</button>
+        </div>
+      </nav>
+
+      <footer hidden={activeTab !== "home"} className="bg-slate-950 px-5 py-8 text-center text-sm text-slate-400"><strong className="text-white">FrikChange</strong><p className="mt-2">Service digital d'annonces et de mise en relation.</p><p className="mt-3 text-xs">Version de test — fonctionnalité de contact direct non activée.</p></footer>
     </main>
   );
 }
