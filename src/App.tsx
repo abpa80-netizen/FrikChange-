@@ -50,8 +50,9 @@ function statusLabel(status: Listing["status"]) {
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
-  const [activeTab, setActiveTab] = useState<"home" | "explore" | "profile">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "explore" | "favorites" | "profile">("home");
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [authReady, setAuthReady] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [authView, setAuthView] = useState<"form" | "forgot" | "reset">("form");
@@ -304,44 +305,62 @@ export default function App() {
 
   return (
     <main className="min-h-screen bg-[#f5f8f8] pb-24 text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4">
-          <a href="#accueil" className="flex items-center gap-3" aria-label="FrikChange, accueil">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 text-2xl font-black text-white shadow-lg shadow-cyan-500/20">F</span>
-            <span><strong className="block text-2xl font-black tracking-tight text-white">FrikChange</strong><small className="text-[10px] font-bold uppercase tracking-[.2em] text-cyan-300">Annonces & communauté</small></span>
-          </a>
-          <span className="hidden text-xs font-semibold tracking-wide text-slate-400 sm:block">ANNONCES COMMUNAUTAIRES · MAROC</span>
-        </div>
-      </header>
-
-      <section id="accueil" hidden={activeTab !== "home"} className="bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-[1.2fr_.8fr] md:items-center md:py-24">
-          <div>
-            <p className="mb-5 inline-flex rounded-full border border-teal-300/30 bg-teal-300/10 px-3 py-1.5 text-xs font-semibold text-teal-200">La mise en relation commence par une annonce</p>
-            <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">Trouvez le bon contact pour votre <span className="text-teal-300">besoin.</span></h1>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300">Publiez une offre ou une demande utile à la communauté : entraide, services de proximité, objets, dons et événements. Chaque annonce est vérifiée avant sa mise en ligne.</p>
-            <button onClick={() => setActiveTab("explore")} className="mt-7 inline-flex rounded-xl bg-teal-400 px-5 py-3 font-bold text-slate-950 hover:bg-teal-300">Explorer les annonces →</button>
-          </div>
-          <div className="rounded-3xl border border-cyan-300/20 bg-gradient-to-br from-cyan-400/15 via-white/5 to-blue-500/10 p-6 shadow-2xl shadow-cyan-950/30">
-            <div className="mb-5 flex items-center justify-between"><span className="text-xs font-bold uppercase tracking-[.2em] text-teal-200">La communauté en mouvement</span><span className="rounded-full border border-teal-200/30 px-3 py-1 text-xs text-teal-100">Maroc</span></div>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                {label:"Entraide",key:"COMMUNITY_HELP",image:"https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=700&q=85"},
-                {label:"Services",key:"LOCAL_SERVICES",image:"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=700&q=85"},
-                {label:"Objets & dons",key:"GOODS_DONATIONS",image:"https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=700&q=85"},
-                {label:"Événements",key:"COMMUNITY_EVENTS",image:"https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=700&q=85"}
-              ].map(item => <button key={item.key} onClick={() => { setFilterCategory(item.key as Category); setActiveTab("explore"); }} className="group relative min-h-32 overflow-hidden rounded-2xl border border-white/15 text-left shadow-lg transition hover:-translate-y-1 hover:border-cyan-300/70"><img src={item.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-110"/><span className="absolute inset-0 bg-gradient-to-t from-[#061321] via-[#061321]/35 to-transparent"/><span className="absolute bottom-3 left-3 right-3 text-sm font-extrabold text-white drop-shadow">{item.label}<span className="float-right text-cyan-300">›</span></span></button>)}
+      <section id="accueil" hidden={activeTab !== "home"} className="bg-[#061426] text-white">
+        <div className="relative isolate overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=1800&q=90" alt="Vue nocturne de la ville au Maroc" className="absolute inset-0 -z-20 h-full w-full object-cover object-center" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#041225]/95 via-[#06172d]/80 to-[#071629]/35" />
+          <header className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 pb-2 pt-4 sm:px-6">
+            <button onClick={() => setActiveTab("home")} className="flex items-center gap-2.5 text-left" aria-label="FrikChange accueil">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-300/30 bg-gradient-to-br from-cyan-400 to-blue-600 text-2xl font-black text-white shadow-lg">F</span>
+              <span><strong className="block text-[1.65rem] font-black leading-none tracking-tight text-white">FrikChange</strong><small className="mt-1 block text-[9px] font-bold uppercase tracking-[.19em] text-cyan-200">Annonces · Communauté</small></span>
+            </button>
+            <span className="rounded-full border border-white/25 bg-slate-950/35 px-3 py-2 text-[10px] font-bold text-white/90">MAROC <span className="ml-1 text-cyan-300">⌄</span></span>
+          </header>
+          <div className="mx-auto max-w-7xl px-4 pb-7 pt-4 sm:px-6 sm:pb-10 sm:pt-7">
+            <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-cyan-300">La communauté commence ici</p>
+            <h1 className="mt-2 max-w-xl text-[2rem] font-black leading-[1.08] tracking-tight sm:text-4xl">Les bonnes opportunités,<br/><span className="text-cyan-300">près de vous.</span></h1>
+            <p className="mt-2 max-w-lg text-xs leading-5 text-slate-100/90 sm:text-sm">Publiez et découvrez des annonces utiles : entraide, services, objets, dons et événements.</p>
+            <div className="mt-5 flex gap-2 rounded-2xl bg-white p-1.5 shadow-2xl shadow-black/25">
+              <span className="flex items-center pl-2 text-xl text-slate-700">⌕</span>
+              <input aria-label="Rechercher par mot-clé ou ville" value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")setActiveTab("explore")}} placeholder="Que recherchez-vous ? (ville, service…)" className="min-w-0 flex-1 border-0 bg-transparent px-1 py-2.5 text-xs text-slate-900 outline-none placeholder:text-slate-500"/>
+              <button onClick={()=>setActiveTab("explore")} className="rounded-xl bg-gradient-to-r from-cyan-700 to-blue-800 px-4 py-2 text-xs font-extrabold text-white">Rechercher</button>
             </div>
-            <p className="mt-5 text-xs leading-5 text-slate-400">Des annonces utiles, vérifiées avant publication. Aucun paiement ni échange d’argent sur la plateforme.</p>
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[10px] font-semibold text-white/90 sm:text-xs">
+              <span><b className="mr-1.5 text-cyan-300">✦</b>Annonces modérées</span><span><b className="mr-1.5 text-cyan-300">⌖</b>Partout au Maroc</span><span><b className="mr-1.5 text-cyan-300">◎</b>Communauté</span><span><b className="mr-1.5 text-cyan-300">✓</b>Accès gratuit</span>
+            </div>
           </div>
-  
+        </div>
+        <div className="mx-auto max-w-7xl px-4 pb-5 pt-4 sm:px-6">
+          <div className="mb-3 flex items-center justify-between"><h2 className="text-sm font-black tracking-wide text-white sm:text-base">Explorer par rubrique</h2><button onClick={()=>setActiveTab("explore")} className="text-[10px] font-bold text-cyan-300">Tout voir ›</button></div>
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+            {[
+              {label:"Entraide",key:"COMMUNITY_HELP",icon:"🤝",image:"https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=700&q=85",tone:"from-blue-600/70"},
+              {label:"Services",key:"LOCAL_SERVICES",icon:"🛠️",image:"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=700&q=85",tone:"from-emerald-600/70"},
+              {label:"Objets & dons",key:"GOODS_DONATIONS",icon:"🎁",image:"https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=700&q=85",tone:"from-orange-600/70"},
+              {label:"Événements",key:"COMMUNITY_EVENTS",icon:"🎉",image:"https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=700&q=85",tone:"from-violet-600/70"}
+            ].map(item=><button key={item.key} onClick={()=>{setFilterCategory(item.key as Category);setActiveTab("explore")}} className="group relative h-[112px] overflow-hidden rounded-2xl border border-white/15 text-left shadow-lg sm:h-36">
+              <img src={item.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-110"/>
+              <span className={`absolute inset-0 bg-gradient-to-br ${item.tone} via-slate-950/25 to-slate-950/80`}/>
+              <span className="absolute left-2.5 top-2.5 flex h-9 w-9 items-center justify-center rounded-xl border border-white/30 bg-white/15 text-xl shadow-lg backdrop-blur">{item.icon}</span>
+              <span className="absolute bottom-2.5 left-3 right-2 text-xs font-extrabold text-white drop-shadow sm:text-sm">{item.label}<span className="float-right text-cyan-200">›</span></span>
+            </button>)}
+          </div>
         </div>
       </section>
 
-      <section id="accueil-annonces" hidden={activeTab !== "home"} className="bg-[#071321] px-4 py-7 text-white sm:px-6">
+      <section id="accueil-annonces" hidden={activeTab !== "home"} className="bg-[#061426] px-4 pb-5 pt-2 text-white sm:px-6">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-4 flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cyan-300">À découvrir</p><h2 className="mt-1 text-xl font-black sm:text-2xl">Annonces de la communauté</h2></div><button onClick={() => setActiveTab("explore")} className="shrink-0 rounded-full border border-white/20 px-3 py-2 text-xs font-bold text-cyan-200">Tout voir ›</button></div>
-          {publicListings.length === 0 ? <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-slate-300">Les premières annonces validées apparaîtront ici.</div> : <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">{(["COMMUNITY_HELP","LOCAL_SERVICES","GOODS_DONATIONS","COMMUNITY_EVENTS","OTHER"] as Category[]).map(cat => { const item=publicListings.find(x=>x.category===cat); if(!item) return null; const image=cat==="COMMUNITY_HELP"?"https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=800&q=85":cat==="LOCAL_SERVICES"?"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=85":cat==="GOODS_DONATIONS"?"https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=800&q=85":cat==="COMMUNITY_EVENTS"?"https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=85":"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=85"; return <button key={cat} onClick={()=>setSelectedListing(item)} className="group overflow-hidden rounded-2xl border border-white/10 bg-[#11243a] text-left shadow-lg transition hover:-translate-y-1 hover:border-cyan-300/60"><div className="relative h-28 overflow-hidden sm:h-36"><img src={image} alt="" loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105"/><span className="absolute left-2 top-2 rounded-full bg-cyan-400 px-2 py-1 text-[9px] font-extrabold text-slate-950">{categoryLabel(cat)}</span></div><div className="p-3"><p className="line-clamp-2 min-h-10 text-xs font-extrabold text-white">{item.title}</p><p className="mt-2 truncate text-[10px] text-slate-400">⌖ {item.city}, {item.country}</p><span className="mt-2 block text-[10px] font-bold text-cyan-300">Voir l’annonce ›</span></div></button>; })}</div>}
+          <div className="mb-3 flex items-center justify-between"><div><p className="text-[9px] font-extrabold uppercase tracking-[.2em] text-cyan-300">Sélection communautaire</p><h2 className="mt-1 text-lg font-black">Annonces en vedette</h2></div><button onClick={()=>setActiveTab("explore")} className="rounded-full border border-white/20 px-3 py-1.5 text-[10px] font-bold text-cyan-200">Voir tout ›</button></div>
+          {publicListings.length===0 ? <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300">Les annonces validées apparaîtront ici dès leur publication.</div> :
+          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {(["COMMUNITY_HELP","LOCAL_SERVICES","GOODS_DONATIONS","COMMUNITY_EVENTS","OTHER"] as Category[]).map(cat=>{const item=publicListings.find(x=>x.category===cat);if(!item)return null;const photo=cat==="COMMUNITY_HELP"?"https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=900&q=85":cat==="LOCAL_SERVICES"?"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=85":cat==="GOODS_DONATIONS"?"https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=900&q=85":cat==="COMMUNITY_EVENTS"?"https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=85":"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=85";return <article key={item.id} className="w-[78vw] max-w-[300px] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/10 bg-[#10243a] shadow-xl">
+              <button onClick={()=>setSelectedListing(item)} className="block w-full text-left"><div className="relative h-36 overflow-hidden"><img src={photo} alt="" loading="lazy" className="h-full w-full object-cover"/><span className="absolute left-3 top-3 rounded-full bg-cyan-400 px-2.5 py-1 text-[9px] font-black text-slate-950">{categoryLabel(cat)}</span><span className="absolute right-3 top-3 rounded-full bg-slate-950/60 px-2 py-1 text-xs text-white">↗</span></div><div className="p-3"><p className="line-clamp-1 text-sm font-extrabold text-white">{item.title}</p><p className="mt-1 text-[10px] text-slate-400">⌖ {item.city}, {item.country}</p><p className="mt-2 text-[10px] font-bold text-cyan-300">Découvrir l’annonce ›</p></div></button>
+              <button aria-label="Ajouter aux favoris" onClick={()=>setFavoriteIds(ids=>ids.includes(item.id)?ids.filter(id=>id!==item.id):[...ids,item.id])} className="absolute hidden"/>
+            </article>})}
+          </div>}
+          <button onClick={()=>{setActiveTab("profile");setShowComposer(true)}} className="mt-4 flex w-full items-center justify-between gap-3 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-[#0b4770] via-[#075c70] to-[#087e83] p-3.5 text-left shadow-lg shadow-cyan-950/30">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-cyan-200/50 bg-white/10 text-2xl">＋</span><span className="min-w-0 flex-1"><b className="block text-xs font-extrabold text-white">Publiez votre annonce gratuitement</b><small className="mt-1 block text-[10px] text-cyan-100">Faites connaître votre offre ou votre besoin à la communauté.</small></span><span className="rounded-full bg-cyan-300 px-3 py-2 text-[10px] font-black text-slate-950">Publier ›</span>
+          </button>
         </div>
       </section>
 
@@ -443,18 +462,21 @@ export default function App() {
         </div>
       </section>
 
-      <section id="fonctionnement" hidden={activeTab !== "home"} className="mx-auto grid max-w-7xl gap-8 px-5 py-8 md:grid-cols-2">
+      <section id="fonctionnement" hidden={activeTab !== "profile"} className="mx-auto grid max-w-7xl gap-8 px-5 py-8 md:grid-cols-2">
         <div><h2 className="text-2xl font-extrabold">Comment fonctionne le service ?</h2><ol className="mt-5 space-y-4 text-sm leading-6 text-slate-600"><li><strong className="text-slate-900">1. Créer un compte.</strong> Inscrivez-vous avec votre adresse e-mail.</li><li><strong className="text-slate-900">2. Publier.</strong> Votre annonce est soumise à modération.</li><li><strong className="text-slate-900">3. Consulter.</strong> Les annonces validées sont visibles dans le catalogue public.</li></ol></div>
         <div className="rounded-2xl bg-slate-50 p-5"><h2 className="text-base font-extrabold">Limites du service</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-600"><li>FrikChange ne propose aucun échange d’argent, transfert, paiement ni conversion de devises.</li><li>FrikChange ne prend pas en charge le transport de bagages ou de colis.</li><li>FrikChange ne garantit ni les personnes, ni les accords, ni les opérations convenues entre utilisateurs.</li></ul><p className="mt-4 border-t border-slate-200 pt-4 text-xs leading-5 text-slate-500">Les utilisateurs doivent respecter les lois applicables. Les annonces interdites, frauduleuses ou dangereuses peuvent être retirées. Cette description technique ne remplace pas une vérification juridique et réglementaire locale.</p></div>
       </section>
 
       {selectedListing && <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="dialog" aria-modal="true" aria-label="Détail de l’annonce" onClick={() => setSelectedListing(null)}><div className="max-h-[88vh] w-full max-w-xl overflow-y-auto rounded-t-3xl border border-cyan-300/20 bg-[#0c1b2d] text-white shadow-2xl sm:rounded-3xl" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between border-b border-white/10 p-4"><span className="text-xs font-bold uppercase tracking-widest text-cyan-300">Détail de l’annonce</span><button onClick={() => setSelectedListing(null)} className="rounded-full bg-white/10 px-3 py-1 text-lg">×</button></div><div className="p-5"><span className="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-200">{categoryLabel(selectedListing.category)} · {selectedListing.listing_type==="OFFER"?"Offre":"Demande"}</span><h2 className="mt-4 text-2xl font-black">{selectedListing.title}</h2><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-300">{selectedListing.description}</p><p className="mt-5 border-t border-white/10 pt-4 text-xs text-slate-400">⌖ {selectedListing.city}, {selectedListing.country}</p><p className="mt-4 rounded-xl bg-white/5 p-3 text-xs leading-5 text-slate-400">Contact direct non activé. FrikChange facilite la découverte des annonces et la mise en relation, sans paiement ni transaction sur la plateforme.</p></div></div></div>}
 
-      <nav aria-label="Navigation mobile" className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#071321]/95 px-3 pb-[max(env(safe-area-inset-bottom),.65rem)] pt-2 shadow-[0_-12px_35px_rgba(0,0,0,.28)] backdrop-blur-xl">
-        <div className="mx-auto grid max-w-xl grid-cols-3 gap-2">
-          <button onClick={() => setActiveTab("home")} className={`rounded-xl px-2 py-2 text-xs font-bold ${activeTab === "home" ? "bg-teal-400/15 text-teal-300" : "text-slate-400"}`}><span className="block text-xl">⌂</span>Accueil</button>
-          <button onClick={() => setActiveTab("explore")} className={`rounded-xl px-2 py-2 text-xs font-bold ${activeTab === "explore" ? "bg-teal-400/15 text-teal-300" : "text-slate-400"}`}><span className="block text-xl">▦</span>Explorer</button>
-          <button onClick={() => { setActiveTab("profile"); setShowComposer(false); }} className={`rounded-xl px-2 py-2 text-xs font-bold ${activeTab === "profile" ? "bg-teal-400/15 text-teal-300" : "text-slate-400"}`}><span className="block text-xl">♙</span>Profil</button>
+      {activeTab==="favorites" && <section className="min-h-[75vh] bg-[#061426] px-4 py-8 text-white"><div className="mx-auto max-w-4xl"><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cyan-300">Votre sélection</p><h1 className="mt-1 text-2xl font-black">Mes favoris</h1>{publicListings.filter(item=>favoriteIds.includes(item.id)).length===0?<p className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-slate-300">Vos annonces favorites apparaîtront ici. Touchez le cœur sur une annonce pour l’enregistrer.</p>:<div className="mt-5 grid gap-3 sm:grid-cols-2">{publicListings.filter(item=>favoriteIds.includes(item.id)).map(item=><button key={item.id} onClick={()=>setSelectedListing(item)} className="rounded-2xl border border-white/10 bg-[#10243a] p-4 text-left"><b>{item.title}</b><p className="mt-1 text-xs text-slate-400">{item.city}, {item.country}</p></button>)}</div>}</div></section>}
+      <nav aria-label="Navigation principale" className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#061321]/95 px-2 pb-[max(env(safe-area-inset-bottom),.55rem)] pt-2 shadow-[0_-12px_35px_rgba(0,0,0,.3)] backdrop-blur-xl">
+        <div className="mx-auto grid max-w-xl grid-cols-5 items-end gap-1">
+          <button onClick={()=>setActiveTab("home")} className={`rounded-xl py-1.5 text-[9px] font-bold ${activeTab==="home"?"text-cyan-300":"text-slate-400"}`}><span className="block text-xl">⌂</span>Accueil</button>
+          <button onClick={()=>setActiveTab("explore")} className={`rounded-xl py-1.5 text-[9px] font-bold ${activeTab==="explore"?"text-cyan-300":"text-slate-400"}`}><span className="block text-xl">▦</span>Explorer</button>
+          <button onClick={()=>{setActiveTab("profile");setShowComposer(true)}} className="relative -mt-7 flex flex-col items-center text-[9px] font-bold text-slate-300"><span className="mb-1 flex h-14 w-14 items-center justify-center rounded-full border-4 border-[#061321] bg-gradient-to-br from-cyan-400 to-blue-600 text-3xl font-light text-white shadow-lg shadow-cyan-500/30">＋</span>Publier</button>
+          <button onClick={()=>setActiveTab("favorites")} className={`rounded-xl py-1.5 text-[9px] font-bold ${activeTab==="favorites"?"text-cyan-300":"text-slate-400"}`}><span className="block text-xl">♡</span>Favoris</button>
+          <button onClick={()=>{setActiveTab("profile");setShowComposer(false)}} className={`rounded-xl py-1.5 text-[9px] font-bold ${activeTab==="profile"?"text-cyan-300":"text-slate-400"}`}><span className="block text-xl">♙</span>Profil</button>
         </div>
       </nav>
 
