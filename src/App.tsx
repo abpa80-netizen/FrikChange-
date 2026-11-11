@@ -33,7 +33,7 @@ const CATEGORY_LABELS: Record<Category, string> = {
 function categoryLabel(category: string) { return CATEGORY_LABELS[category as Category] || "Autres annonces"; }
 const RESTRICTED_CONTENT = /(?:\b(?:wave|orange\s*money|western\s*union|moneygram|mtn\s*momo|moov\s*money|mouv|virement|transfert\s+d['’]?argent|transfert\s+mobile|taux\s+de\s+change|conversion\s+de\s+devise|échange\s+de\s+devise|monnaie\s+numérique|crypto(?:monnaie)?|devise|cash|colis|bagages?|valises?)\b|\b\d+(?:[.,]\d+)?\s*(?:dh|dhs|mad|fcfa|xof|xaf|eur|usd|dollars?|dirhams?)\b|transport\s+de\s+(?:bagages?|colis|valises?))/i;
 function contentPolicyMessage(value: string) {
-  return RESTRICTED_CONTENT.test(value) ? "Cette annonce semble contenir une proposition financière, un transfert d'argent ou du transport de bagages. Ces activités ne sont pas autorisées sur FrikChange." : "";
+  return RESTRICTED_CONTENT.test(value) ? "Cette annonce semble contenir une proposition financière, un transfert d'argent ou du transport de bagages. Ces activités ne sont pas autorisées sur FriKonect." : "";
 }
 function readableError(message: string) {
   if (/Invalid login credentials/i.test(message)) return "Adresse e-mail ou mot de passe incorrect.";
@@ -306,28 +306,40 @@ export default function App() {
   return (
     <main className="min-h-screen bg-[#f5f8f8] pb-24 text-slate-900">
       <section id="accueil" hidden={activeTab !== "home"} className="bg-[#061426] text-white">
-        <div className="relative isolate overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=1800&q=90" alt="Vue nocturne de la ville au Maroc" className="absolute inset-0 -z-20 h-full w-full object-cover object-center" />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#041225]/95 via-[#06172d]/80 to-[#071629]/35" />
-          <header className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 pb-2 pt-4 sm:px-6">
-            <button onClick={() => setActiveTab("home")} className="flex items-center gap-2.5 text-left" aria-label="FrikChange accueil">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-300/30 bg-gradient-to-br from-cyan-400 to-blue-600 text-2xl font-black text-white shadow-lg">F</span>
-              <span><strong className="block text-[1.65rem] font-black leading-none tracking-tight text-white">FrikChange</strong><small className="mt-1 block text-[9px] font-bold uppercase tracking-[.19em] text-cyan-200">Annonces · Communauté</small></span>
-            </button>
-            <span className="rounded-full border border-white/25 bg-slate-950/35 px-3 py-2 text-[10px] font-bold text-white/90">MAROC <span className="ml-1 text-cyan-300">⌄</span></span>
-          </header>
-          <div className="mx-auto max-w-7xl px-4 pb-7 pt-4 sm:px-6 sm:pb-10 sm:pt-7">
-            <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-cyan-300">La communauté commence ici</p>
-            <h1 className="mt-2 max-w-xl text-[2rem] font-black leading-[1.08] tracking-tight sm:text-4xl">Les bonnes opportunités,<br/><span className="text-cyan-300">près de vous.</span></h1>
-            <p className="mt-2 max-w-lg text-xs leading-5 text-slate-100/90 sm:text-sm">Publiez et découvrez des annonces utiles : entraide, services, objets, dons et événements.</p>
-            <div className="mt-5 flex gap-2 rounded-2xl bg-white p-1.5 shadow-2xl shadow-black/25">
-              <span className="flex items-center pl-2 text-xl text-slate-700">⌕</span>
-              <input aria-label="Rechercher par mot-clé ou ville" value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")setActiveTab("explore")}} placeholder="Que recherchez-vous ? (ville, service…)" className="min-w-0 flex-1 border-0 bg-transparent px-1 py-2.5 text-xs text-slate-900 outline-none placeholder:text-slate-500"/>
-              <button onClick={()=>setActiveTab("explore")} className="rounded-xl bg-gradient-to-r from-cyan-700 to-blue-800 px-4 py-2 text-xs font-extrabold text-white">Rechercher</button>
+        <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
+          <div className="relative mx-auto aspect-square w-full max-w-[430px] overflow-hidden rounded-[2rem] border border-cyan-200/20 shadow-[0_28px_80px_rgba(0,0,0,.42)]">
+            <img src="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=1200&q=90" alt="Architecture urbaine au Maroc" className="absolute inset-0 h-full w-full object-cover object-center"/>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#031225]/90 via-[#071b31]/72 to-[#052d3c]/55"/>
+            <div className="absolute inset-0 flex flex-col justify-between p-5 sm:p-7">
+              <div className="flex items-center gap-3">
+                <svg viewBox="0 0 120 120" role="img" aria-label="F stylisé avec silhouette de l’Afrique" className="h-[76px] w-[76px] shrink-0 drop-shadow-[0_8px_18px_rgba(0,0,0,.35)] sm:h-24 sm:w-24">
+                  <defs><linearGradient id="frikonect-mark" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#9af7e7"/><stop offset="55%" stopColor="#36c9c0"/><stop offset="100%" stopColor="#2784d8"/></linearGradient></defs>
+                  <path d="M22 12h78v19H44v19h47v18H44v39H22z" fill="url(#frikonect-mark)"/>
+                  <path d="M83 43l8 5 3 9-4 7 2 8-7 10-5 13-7 7-4-8-6-7 2-9-5-8 4-9 1-10 8-6z" fill="#e9fffb" stroke="#08263c" strokeWidth="2.5" strokeLinejoin="round" opacity=".96"/>
+                  <circle cx="88" cy="49" r="2.2" fill="#08263c"/>
+                </svg>
+                <div className="min-w-0">
+                  <button onClick={() => setActiveTab("home")} className="text-left" aria-label="FriKonect accueil">
+                    <strong className="block text-[2rem] font-black leading-none tracking-[-.055em] text-white sm:text-[2.5rem]">FriKonect</strong>
+                  </button>
+                  <p className="mt-2 text-[10px] font-extrabold uppercase tracking-[.17em] text-cyan-100 sm:text-xs">La communauté commence ici</p>
+                </div>
+              </div>
+              <div className="max-w-sm pb-1">
+                <span className="inline-flex rounded-full border border-cyan-100/25 bg-cyan-100/10 px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-[.16em] text-cyan-100 backdrop-blur">Annonces · Entraide · Proximité</span>
+                <h1 className="mt-4 text-[2rem] font-black leading-[1.04] tracking-[-.045em] text-white sm:text-4xl">Faites grandir vos <span className="text-cyan-300">connexions.</span></h1>
+                <p className="mt-3 max-w-xs text-xs leading-5 text-white/90 sm:text-sm">Découvrez des offres, partagez vos besoins et créez des liens utiles au sein de votre communauté.</p>
+              </div>
             </div>
-            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[10px] font-semibold text-white/90 sm:text-xs">
-              <span><b className="mr-1.5 text-cyan-300">✦</b>Annonces modérées</span><span><b className="mr-1.5 text-cyan-300">⌖</b>Partout au Maroc</span><span><b className="mr-1.5 text-cyan-300">◎</b>Communauté</span><span><b className="mr-1.5 text-cyan-300">✓</b>Accès gratuit</span>
-            </div>
+            <div className="pointer-events-none absolute -bottom-16 -right-12 h-52 w-52 rounded-full border border-cyan-100/15"/>
+          </div>
+          <div className="mx-auto mt-4 flex max-w-2xl gap-2 rounded-2xl border border-slate-200/10 bg-white p-1.5 shadow-[0_16px_45px_rgba(0,0,0,.28)]">
+            <span className="flex items-center pl-2 text-xl text-slate-700">⌕</span>
+            <input aria-label="Rechercher par mot-clé ou ville" value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")setActiveTab("explore")}} placeholder="Que recherchez-vous ? (ville, service…)" className="min-w-0 flex-1 border-0 bg-transparent px-1 py-2.5 text-xs text-slate-900 outline-none placeholder:text-slate-500"/>
+            <button onClick={()=>setActiveTab("explore")} className="rounded-xl bg-gradient-to-r from-cyan-700 to-blue-800 px-4 py-2 text-xs font-extrabold text-white">Rechercher</button>
+          </div>
+          <div className="mx-auto mt-3 flex max-w-2xl flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] font-semibold text-white/85 sm:text-xs">
+            <span><b className="mr-1.5 text-cyan-300">✦</b>Annonces modérées</span><span><b className="mr-1.5 text-cyan-300">⌖</b>Partout au Maroc</span><span><b className="mr-1.5 text-cyan-300">✓</b>Accès gratuit</span>
           </div>
         </div>
         <div className="mx-auto max-w-7xl px-4 pb-5 pt-4 sm:px-6">
@@ -369,7 +381,7 @@ export default function App() {
         : passwordRecovery ? <div className="mx-auto max-w-xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <p className="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Sécurité du compte</p>
           <h2 className="mt-2 text-2xl font-extrabold">Nouveau mot de passe</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-600">Le lien de récupération a été accepté. Choisissez un nouveau mot de passe pour votre compte FrikChange.</p>
+          <p className="mt-3 text-sm leading-6 text-slate-600">Le lien de récupération a été accepté. Choisissez un nouveau mot de passe pour votre compte FriKonect.</p>
           <form onSubmit={handlePasswordUpdate} className="mt-5 space-y-4">
             <label className="block text-sm font-semibold">Nouveau mot de passe<input required minLength={8} type="password" autoComplete="new-password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder="8 caractères minimum" /></label>
             <button disabled={busy} className="w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white disabled:opacity-50">{busy ? "Modification…" : "Enregistrer le nouveau mot de passe"}</button>
@@ -464,10 +476,10 @@ export default function App() {
 
       <section id="fonctionnement" hidden={activeTab !== "profile"} className="mx-auto grid max-w-7xl gap-8 px-5 py-8 md:grid-cols-2">
         <div><h2 className="text-2xl font-extrabold">Comment fonctionne le service ?</h2><ol className="mt-5 space-y-4 text-sm leading-6 text-slate-600"><li><strong className="text-slate-900">1. Créer un compte.</strong> Inscrivez-vous avec votre adresse e-mail.</li><li><strong className="text-slate-900">2. Publier.</strong> Votre annonce est soumise à modération.</li><li><strong className="text-slate-900">3. Consulter.</strong> Les annonces validées sont visibles dans le catalogue public.</li></ol></div>
-        <div className="rounded-2xl bg-slate-50 p-5"><h2 className="text-base font-extrabold">Limites du service</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-600"><li>FrikChange ne propose aucun échange d’argent, transfert, paiement ni conversion de devises.</li><li>FrikChange ne prend pas en charge le transport de bagages ou de colis.</li><li>FrikChange ne garantit ni les personnes, ni les accords, ni les opérations convenues entre utilisateurs.</li></ul><p className="mt-4 border-t border-slate-200 pt-4 text-xs leading-5 text-slate-500">Les utilisateurs doivent respecter les lois applicables. Les annonces interdites, frauduleuses ou dangereuses peuvent être retirées. Cette description technique ne remplace pas une vérification juridique et réglementaire locale.</p></div>
+        <div className="rounded-2xl bg-slate-50 p-5"><h2 className="text-base font-extrabold">Limites du service</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-600"><li>FriKonect ne propose aucun échange d’argent, transfert, paiement ni conversion de devises.</li><li>FriKonect ne prend pas en charge le transport de bagages ou de colis.</li><li>FriKonect ne garantit ni les personnes, ni les accords, ni les opérations convenues entre utilisateurs.</li></ul><p className="mt-4 border-t border-slate-200 pt-4 text-xs leading-5 text-slate-500">Les utilisateurs doivent respecter les lois applicables. Les annonces interdites, frauduleuses ou dangereuses peuvent être retirées. Cette description technique ne remplace pas une vérification juridique et réglementaire locale.</p></div>
       </section>
 
-      {selectedListing && <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="dialog" aria-modal="true" aria-label="Détail de l’annonce" onClick={() => setSelectedListing(null)}><div className="max-h-[88vh] w-full max-w-xl overflow-y-auto rounded-t-3xl border border-cyan-300/20 bg-[#0c1b2d] text-white shadow-2xl sm:rounded-3xl" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between border-b border-white/10 p-4"><span className="text-xs font-bold uppercase tracking-widest text-cyan-300">Détail de l’annonce</span><button onClick={() => setSelectedListing(null)} className="rounded-full bg-white/10 px-3 py-1 text-lg">×</button></div><div className="p-5"><span className="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-200">{categoryLabel(selectedListing.category)} · {selectedListing.listing_type==="OFFER"?"Offre":"Demande"}</span><h2 className="mt-4 text-2xl font-black">{selectedListing.title}</h2><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-300">{selectedListing.description}</p><p className="mt-5 border-t border-white/10 pt-4 text-xs text-slate-400">⌖ {selectedListing.city}, {selectedListing.country}</p><p className="mt-4 rounded-xl bg-white/5 p-3 text-xs leading-5 text-slate-400">Contact direct non activé. FrikChange facilite la découverte des annonces et la mise en relation, sans paiement ni transaction sur la plateforme.</p></div></div></div>}
+      {selectedListing && <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="dialog" aria-modal="true" aria-label="Détail de l’annonce" onClick={() => setSelectedListing(null)}><div className="max-h-[88vh] w-full max-w-xl overflow-y-auto rounded-t-3xl border border-cyan-300/20 bg-[#0c1b2d] text-white shadow-2xl sm:rounded-3xl" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between border-b border-white/10 p-4"><span className="text-xs font-bold uppercase tracking-widest text-cyan-300">Détail de l’annonce</span><button onClick={() => setSelectedListing(null)} className="rounded-full bg-white/10 px-3 py-1 text-lg">×</button></div><div className="p-5"><span className="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-200">{categoryLabel(selectedListing.category)} · {selectedListing.listing_type==="OFFER"?"Offre":"Demande"}</span><h2 className="mt-4 text-2xl font-black">{selectedListing.title}</h2><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-300">{selectedListing.description}</p><p className="mt-5 border-t border-white/10 pt-4 text-xs text-slate-400">⌖ {selectedListing.city}, {selectedListing.country}</p><p className="mt-4 rounded-xl bg-white/5 p-3 text-xs leading-5 text-slate-400">Contact direct non activé. FriKonect facilite la découverte des annonces et la mise en relation, sans paiement ni transaction sur la plateforme.</p></div></div></div>}
 
       {activeTab==="favorites" && <section className="min-h-[75vh] bg-[#061426] px-4 py-8 text-white"><div className="mx-auto max-w-4xl"><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cyan-300">Votre sélection</p><h1 className="mt-1 text-2xl font-black">Mes favoris</h1>{publicListings.filter(item=>favoriteIds.includes(item.id)).length===0?<p className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-slate-300">Vos annonces favorites apparaîtront ici. Touchez le cœur sur une annonce pour l’enregistrer.</p>:<div className="mt-5 grid gap-3 sm:grid-cols-2">{publicListings.filter(item=>favoriteIds.includes(item.id)).map(item=><button key={item.id} onClick={()=>setSelectedListing(item)} className="rounded-2xl border border-white/10 bg-[#10243a] p-4 text-left"><b>{item.title}</b><p className="mt-1 text-xs text-slate-400">{item.city}, {item.country}</p></button>)}</div>}</div></section>}
       <nav aria-label="Navigation principale" className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#061321]/95 px-2 pb-[max(env(safe-area-inset-bottom),.55rem)] pt-2 shadow-[0_-12px_35px_rgba(0,0,0,.3)] backdrop-blur-xl">
@@ -480,7 +492,7 @@ export default function App() {
         </div>
       </nav>
 
-      <footer hidden={activeTab !== "home"} className="bg-slate-950 px-5 py-8 text-center text-sm text-slate-400"><strong className="text-white">FrikChange</strong><p className="mt-2">Service digital d'annonces et de mise en relation.</p><p className="mt-3 text-xs">Version de test — fonctionnalité de contact direct non activée.</p></footer>
+      <footer hidden={activeTab !== "home"} className="bg-slate-950 px-5 py-8 text-center text-sm text-slate-400"><strong className="text-white">FriKonect</strong><p className="mt-2">Service digital d'annonces et de mise en relation.</p><p className="mt-3 text-xs">Version de test — fonctionnalité de contact direct non activée.</p></footer>
     </main>
   );
 }
