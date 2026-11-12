@@ -306,55 +306,49 @@ export default function App() {
   return (
     <main className="min-h-screen bg-[#f5f8f8] pb-24 text-slate-900">
       <section id="accueil" hidden={activeTab !== "home"} className="bg-[#061426] text-white">
-        <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
-          <div className="relative mx-auto aspect-square w-full max-w-[430px] overflow-hidden rounded-[2rem] border border-cyan-200/20 shadow-[0_28px_80px_rgba(0,0,0,.42)]">
-            <img src="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=1200&q=90" alt="Architecture urbaine au Maroc" className="absolute inset-0 h-full w-full object-cover object-center"/>
-            <div className="absolute inset-0 bg-gradient-to-br from-[#031225]/90 via-[#071b31]/72 to-[#052d3c]/55"/>
-            <div className="absolute inset-0 flex flex-col justify-between p-5 sm:p-7">
-              <div className="flex items-center gap-3">
-                <svg viewBox="0 0 120 120" role="img" aria-label="F stylisé avec silhouette de l’Afrique" className="h-[76px] w-[76px] shrink-0 drop-shadow-[0_8px_18px_rgba(0,0,0,.35)] sm:h-24 sm:w-24">
+        <div className="mx-auto max-w-7xl px-3 pt-2 sm:px-6">
+          <div className="relative mx-auto h-[174px] w-full overflow-hidden rounded-[1.35rem] border border-cyan-200/20 shadow-[0_16px_38px_rgba(0,0,0,.28)] sm:h-[230px]">
+            <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1600&q=90" alt="Communauté de jeunes adultes réunis en extérieur" className="absolute inset-0 h-full w-full object-cover object-center"/>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#031225]/95 via-[#071b31]/75 to-[#071b31]/15"/>
+            <div className="absolute inset-0 flex flex-col justify-center p-4 sm:p-7">
+              <div className="flex items-center gap-2.5">
+                <svg viewBox="0 0 120 120" role="img" aria-label="F stylisé avec silhouette de l’Afrique" className="h-12 w-12 shrink-0 drop-shadow-lg sm:h-[68px] sm:w-[68px]">
                   <defs><linearGradient id="frikonect-mark" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#9af7e7"/><stop offset="55%" stopColor="#36c9c0"/><stop offset="100%" stopColor="#2784d8"/></linearGradient></defs>
                   <path d="M22 12h78v19H44v19h47v18H44v39H22z" fill="url(#frikonect-mark)"/>
-                  <path d="M83 43l8 5 3 9-4 7 2 8-7 10-5 13-7 7-4-8-6-7 2-9-5-8 4-9 1-10 8-6z" fill="#e9fffb" stroke="#08263c" strokeWidth="2.5" strokeLinejoin="round" opacity=".96"/>
-                  <circle cx="88" cy="49" r="2.2" fill="#08263c"/>
+                  <path d="M83 43l8 5 3 9-4 7 2 8-7 10-5 13-7 7-4-8-6-7 2-9-5-8 4-9 1-10 8-6z" fill="#e9fffb" stroke="#08263c" strokeWidth="2.5" strokeLinejoin="round"/>
                 </svg>
                 <div className="min-w-0">
                   <button onClick={() => setActiveTab("home")} className="text-left" aria-label="FriKonect accueil">
-                    <strong className="block text-[2rem] font-black leading-none tracking-[-.055em] text-white sm:text-[2.5rem]">FriKonect</strong>
+                    <strong className="block text-[1.8rem] font-black leading-none tracking-[-.055em] text-white sm:text-[2.5rem]">FriKonect</strong>
                   </button>
-                  <p className="mt-2 text-[10px] font-extrabold uppercase tracking-[.17em] text-cyan-100 sm:text-xs">La communauté commence ici</p>
+                  <p className="mt-1 text-[9px] font-extrabold uppercase tracking-[.14em] text-cyan-100 sm:text-xs">La communauté commence ici</p>
                 </div>
               </div>
-              <div className="max-w-sm pb-1">
-                <span className="inline-flex rounded-full border border-cyan-100/25 bg-cyan-100/10 px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-[.16em] text-cyan-100 backdrop-blur">Annonces · Entraide · Proximité</span>
-                <h1 className="mt-4 text-[2rem] font-black leading-[1.04] tracking-[-.045em] text-white sm:text-4xl">Faites grandir vos <span className="text-cyan-300">connexions.</span></h1>
-                <p className="mt-3 max-w-xs text-xs leading-5 text-white/90 sm:text-sm">Découvrez des offres, partagez vos besoins et créez des liens utiles au sein de votre communauté.</p>
+              <div className="mt-3 max-w-sm">
+                <h1 className="text-[1.15rem] font-black leading-tight tracking-[-.025em] text-white sm:text-3xl">Faites grandir vos <span className="text-cyan-300">connexions.</span></h1>
+                <p className="mt-1 max-w-xs text-[10px] leading-4 text-white/90 sm:text-sm sm:leading-5">Des annonces utiles pour s’entraider et créer des liens près de chez vous.</p>
               </div>
             </div>
-            <div className="pointer-events-none absolute -bottom-16 -right-12 h-52 w-52 rounded-full border border-cyan-100/15"/>
           </div>
-          <div className="mx-auto mt-4 flex max-w-2xl gap-2 rounded-2xl border border-slate-200/10 bg-white p-1.5 shadow-[0_16px_45px_rgba(0,0,0,.28)]">
-            <span className="flex items-center pl-2 text-xl text-slate-700">⌕</span>
-            <input aria-label="Rechercher par mot-clé ou ville" value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")setActiveTab("explore")}} placeholder="Que recherchez-vous ? (ville, service…)" className="min-w-0 flex-1 border-0 bg-transparent px-1 py-2.5 text-xs text-slate-900 outline-none placeholder:text-slate-500"/>
-            <button onClick={()=>setActiveTab("explore")} className="rounded-xl bg-gradient-to-r from-cyan-700 to-blue-800 px-4 py-2 text-xs font-extrabold text-white">Rechercher</button>
-          </div>
-          <div className="mx-auto mt-3 flex max-w-2xl flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] font-semibold text-white/85 sm:text-xs">
-            <span><b className="mr-1.5 text-cyan-300">✦</b>Annonces modérées</span><span><b className="mr-1.5 text-cyan-300">⌖</b>Partout au Maroc</span><span><b className="mr-1.5 text-cyan-300">✓</b>Accès gratuit</span>
+          <div className="mx-auto mt-2.5 flex max-w-2xl gap-2 rounded-xl border border-slate-200/10 bg-white p-1 shadow-[0_10px_26px_rgba(0,0,0,.2)]">
+            <span className="flex items-center pl-2 text-lg text-slate-700">⌕</span>
+            <input aria-label="Rechercher par mot-clé ou ville" value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")setActiveTab("explore")}} placeholder="Rechercher une annonce ou une ville…" className="min-w-0 flex-1 border-0 bg-transparent px-1 py-2 text-[11px] text-slate-900 outline-none placeholder:text-slate-500"/>
+            <button onClick={()=>setActiveTab("explore")} aria-label="Rechercher" className="rounded-lg bg-gradient-to-r from-cyan-700 to-blue-800 px-3 py-2 text-[11px] font-extrabold text-white">OK</button>
           </div>
         </div>
-        <div className="mx-auto max-w-7xl px-4 pb-5 pt-4 sm:px-6">
-          <div className="mb-3 flex items-center justify-between"><h2 className="text-sm font-black tracking-wide text-white sm:text-base">Explorer par rubrique</h2><button onClick={()=>setActiveTab("explore")} className="text-[10px] font-bold text-cyan-300">Tout voir ›</button></div>
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+        <div className="mx-auto max-w-7xl px-3 pb-3 pt-2 sm:px-6">
+          <div className="mb-2 flex items-center justify-between"><h2 className="text-xs font-black tracking-wide text-white sm:text-base">Rubriques</h2><button onClick={()=>setActiveTab("explore")} className="text-[10px] font-bold text-cyan-300">Tout voir ›</button></div>
+          <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-4">
             {[
               {label:"Entraide",key:"COMMUNITY_HELP",icon:"🤝",image:"https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=700&q=85",tone:"from-blue-600/70"},
               {label:"Services",key:"LOCAL_SERVICES",icon:"🛠️",image:"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=700&q=85",tone:"from-emerald-600/70"},
               {label:"Objets & dons",key:"GOODS_DONATIONS",icon:"🎁",image:"https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=700&q=85",tone:"from-orange-600/70"},
               {label:"Événements",key:"COMMUNITY_EVENTS",icon:"🎉",image:"https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=700&q=85",tone:"from-violet-600/70"}
-            ].map(item=><button key={item.key} onClick={()=>{setFilterCategory(item.key as Category);setActiveTab("explore")}} className="group relative h-[112px] overflow-hidden rounded-2xl border border-white/15 text-left shadow-lg sm:h-36">
+            ].map(item=><button key={item.key} onClick={()=>{setFilterCategory(item.key as Category);setActiveTab("explore")}} className="group relative h-[82px] overflow-hidden rounded-xl border border-white/15 text-left shadow-lg sm:h-36">
               <img src={item.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-110"/>
               <span className={`absolute inset-0 bg-gradient-to-br ${item.tone} via-slate-950/25 to-slate-950/80`}/>
-              <span className="absolute left-2.5 top-2.5 flex h-9 w-9 items-center justify-center rounded-xl border border-white/30 bg-white/15 text-xl shadow-lg backdrop-blur">{item.icon}</span>
-              <span className="absolute bottom-2.5 left-3 right-2 text-xs font-extrabold text-white drop-shadow sm:text-sm">{item.label}<span className="float-right text-cyan-200">›</span></span>
+              <span className="absolute left-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-lg border border-white/30 bg-white/15 text-sm shadow-lg backdrop-blur sm:left-2.5 sm:top-2.5 sm:h-9 sm:w-9 sm:text-xl">{item.icon}</span>
+              <span className="absolute bottom-1.5 left-1.5 right-1 text-[9px] font-extrabold leading-tight text-white drop-shadow sm:bottom-2.5 sm:left-3 sm:right-2 sm:text-sm">{item.label}<span className="float-right text-cyan-200">›</span></span>
             </button>)}
           </div>
         </div>
