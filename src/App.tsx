@@ -340,7 +340,7 @@ export default function App() {
               {label:"Entraide",key:"COMMUNITY_HELP",icon:"👥",image:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=85"},
               {label:"Services",key:"LOCAL_SERVICES",icon:"🔧",image:"https://images.unsplash.com/photo-1581244277943-fe4a9c777189?auto=format&fit=crop&w=700&q=85"},
               {label:"Objets & Dons",key:"GOODS_DONATIONS",icon:"📦",image:"https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=700&q=85"},
-              {label:"Événements",key:"COMMUNITY_EVENTS",icon:"◷",image:"https://images.unsplash.com/photo-1507504031003-b417219a0andet?auto=format&fit=crop&w=700&q=85"}
+              {label:"Événements",key:"COMMUNITY_EVENTS",icon:"◷",image:"https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=700&q=85"}
             ].map(item=><button key={item.key} onClick={()=>{setFilterCategory(item.key as Category);setActiveTab("explore")}} className="fk-category group overflow-hidden rounded-2xl border border-slate-200 bg-white text-center shadow-[0_5px_14px_rgba(15,39,85,.12)]">
               <img src={item.image} alt="" loading="lazy" className="h-16 w-full object-cover sm:h-32"/>
               <span className="relative mx-auto -mt-5 flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-[#073477] text-lg text-white shadow-md sm:h-14 sm:w-14 sm:text-2xl">{item.icon}</span>
