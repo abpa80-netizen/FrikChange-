@@ -218,3 +218,149 @@ main nav.fk-bottom-nav button > span:first-child { line-height: 1.1; }
   main > section#accueil .fk-category > span:last-child { min-height: 42px; display:flex; align-items:center; justify-content:center; }
   main > section#accueil-annonces .fk-feature-card { width: 72vw; }
 }
+
+
+/* Precision pass: align the mobile home screen with the supplied FriKonect mockup. */
+html, body { background: #f7f9ff !important; }
+main.min-h-screen {
+  background: #f7f9ff !important;
+  color: #102957 !important;
+  padding-bottom: 92px !important;
+}
+main > section#accueil.fk-home,
+main > section#accueil-annonces.fk-home {
+  display: block;
+  width: 100%;
+  background: #f7f9ff !important;
+  color: #102957 !important;
+  border: 0 !important;
+}
+main > section#accueil .fk-hero {
+  height: 230px !important;
+  background: #082e68 !important;
+}
+main > section#accueil .fk-hero > img {
+  object-position: 72% 48% !important;
+  filter: saturate(1.08) brightness(1.08) !important;
+}
+main > section#accueil .fk-hero > div:nth-child(2) {
+  background: linear-gradient(90deg, rgba(3,28,75,.88) 0%, rgba(3,35,83,.60) 46%, rgba(3,35,83,.08) 100%) !important;
+}
+main > section#accueil .fk-hero-swoosh { display: none !important; }
+main > section#accueil .fk-hero > div:last-child {
+  justify-content: flex-start !important;
+  padding: 34px 24px 22px !important;
+}
+main > section#accueil .fk-hero svg {
+  width: 54px !important;
+  height: 54px !important;
+}
+main > section#accueil .fk-hero strong {
+  font-size: 30px !important;
+  letter-spacing: -.035em !important;
+}
+main > section#accueil .fk-hero p {
+  text-shadow: 0 1px 3px rgba(0,0,0,.35);
+}
+main > section#accueil .fk-hero p.mt-7 {
+  margin-top: 22px !important;
+  font-size: 18px !important;
+}
+main > section#accueil .fk-hero > div:last-child > div:last-child { display:none !important; }
+main > section#accueil .fk-search-wrap {
+  margin-top: -18px !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+}
+main > section#accueil .fk-search-wrap > div {
+  min-height: 58px !important;
+  padding: 7px 14px !important;
+  border: 1px solid #dce4f2 !important;
+  border-radius: 18px !important;
+  background: #fff !important;
+  box-shadow: 0 7px 20px rgba(13,39,82,.16) !important;
+  opacity: 1 !important;
+}
+main > section#accueil .fk-search-wrap input {
+  background: #fff !important;
+  color: #102957 !important;
+  font-size: 15px !important;
+  opacity: 1 !important;
+}
+main > section#accueil .fk-search-wrap input::placeholder { color:#697791 !important; opacity:1 !important; }
+main > section#accueil .fk-search-wrap button { color:#102957 !important; }
+main > section#accueil > div:nth-child(3) {
+  padding: 22px 18px 20px !important;
+  background: #f7f9ff !important;
+}
+main > section#accueil .grid.grid-cols-4 { gap: 8px !important; }
+main > section#accueil .fk-category {
+  height: 116px !important;
+  border-radius: 15px !important;
+  background: #fff !important;
+  border: 1px solid #dce4f2 !important;
+  box-shadow: 0 4px 12px rgba(16,41,87,.12) !important;
+}
+main > section#accueil .fk-category img {
+  height: 61px !important;
+  object-fit: cover !important;
+}
+main > section#accueil .fk-category > span:nth-child(2) {
+  width: 38px !important;
+  height: 38px !important;
+  margin-top: -19px !important;
+  font-size: 16px !important;
+  background: #073477 !important;
+}
+main > section#accueil .fk-category > span:last-child {
+  min-height: 34px !important;
+  padding: 4px 2px 7px !important;
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+  color: #092657 !important;
+}
+main > section#accueil-annonces.fk-home {
+  padding: 14px 18px 24px !important;
+  background: #fff !important;
+  border-top: 1px solid #e1e7f0 !important;
+}
+main > section#accueil-annonces .mb-4 { margin-bottom: 14px !important; }
+main > section#accueil-annonces h2 { color:#102957 !important; font-size:21px !important; }
+main > section#accueil-annonces .fk-feature-card {
+  width: 78vw !important;
+  max-width: 320px !important;
+  background: #fff !important;
+  border: 1px solid #dce4f2 !important;
+  border-radius: 17px !important;
+  box-shadow: 0 5px 14px rgba(16,41,87,.13) !important;
+}
+main > section#accueil-annonces .fk-feature-card > button:first-child > div:first-child { height: 126px !important; }
+main > section#accueil-annonces .fk-feature-card p { color:#102957 !important; }
+main > section#accueil-annonces .fk-publish-banner {
+  min-height: 112px !important;
+  margin-top: 14px !important;
+  padding: 16px !important;
+  background: linear-gradient(105deg,#073477,#06428d) !important;
+}
+main nav.fk-bottom-nav {
+  background: #fff !important;
+  border-top: 1px solid #dce4f2 !important;
+  padding-top: 7px !important;
+  box-shadow: 0 -5px 18px rgba(16,41,87,.10) !important;
+}
+main nav.fk-bottom-nav button { color:#102957 !important; }
+main nav.fk-bottom-nav button > span:first-child { font-size:25px !important; }
+main nav.fk-bottom-nav button:nth-child(3) > span:first-child {
+  width:58px !important;height:58px !important;
+  background:linear-gradient(135deg,#27d2ce,#08bfc9) !important;
+  color:#082b63 !important;
+  border:4px solid #fff !important;
+  margin-bottom:2px !important;
+  box-shadow:0 5px 15px rgba(0,150,180,.25) !important;
+}
+@media (min-width: 641px) {
+  main > section#accueil .fk-hero { height: 330px !important; }
+  main > section#accueil .fk-hero > div:last-child { padding-left: 6vw !important; }
+  main > section#accueil .fk-category { height: 220px !important; }
+  main > section#accueil .fk-category img { height: 132px !important; }
+}
