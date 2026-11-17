@@ -307,8 +307,8 @@ export default function App() {
     <main className="min-h-screen bg-[#f5f8f8] pb-24 text-slate-900">
       <section id="accueil" hidden={activeTab !== "home"} className="fk-home bg-white text-slate-900">
         <div className="fk-hero relative w-full overflow-hidden">
-          <img src="https://www.voninski.com/images/xl/_DSC8982-HDR-05-2014.jpg" alt="Mosquée Hassan II de Casablanca illuminée au crépuscule" className="absolute inset-0 h-full w-full object-cover object-[72%_48%]" fetchPriority="high"/>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#001d52]/82 via-[#062d68]/38 to-[#062d68]/5"/>
+          <img src="https://www.voninski.com/images/xl/_DSC8982-HDR-05-2014.jpg" alt="Mosquée Hassan II de Casablanca illuminée au crépuscule" className="absolute inset-0 h-full w-full scale-x-[-1] object-cover object-center" fetchPriority="high"/>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#001d52]/32 via-[#062d68]/12 to-[#062d68]/0"/>
           <div className="absolute inset-0 fk-hero-swoosh"/>
           <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-center px-6 pb-10 pt-5 sm:px-10">
             <div className="flex items-center gap-4">
@@ -338,10 +338,10 @@ export default function App() {
         <div className="mx-auto max-w-7xl px-4 pb-5 pt-8 sm:px-8">
           <div className="grid grid-cols-4 gap-2 sm:gap-5">
             {[
-              {label:"Entraide",key:"COMMUNITY_HELP",icon:"👥",image:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=85"},
-              {label:"Services",key:"LOCAL_SERVICES",icon:"🔧",image:"https://images.unsplash.com/photo-1581244277943-fe4a9c777189?auto=format&fit=crop&w=700&q=85"},
+              {label:"Entraide",key:"COMMUNITY_HELP",icon:"👥",image:"https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=700&q=85"},
+              {label:"Services",key:"LOCAL_SERVICES",icon:"🔧",image:"https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=700&q=85"},
               {label:"Objets & Dons",key:"GOODS_DONATIONS",icon:"📦",image:"https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=700&q=85"},
-              {label:"Événements",key:"COMMUNITY_EVENTS",icon:"◷",image:"https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=700&q=85"}
+              {label:"Événements",key:"COMMUNITY_EVENTS",icon:"◷",image:"https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=700&q=85"}
             ].map(item=><button key={item.key} onClick={()=>{setFilterCategory(item.key as Category);setActiveTab("explore")}} className="fk-category group overflow-hidden rounded-2xl border border-slate-200 bg-white text-center shadow-[0_5px_14px_rgba(15,39,85,.12)]">
               <img src={item.image} alt="" loading="lazy" className="h-16 w-full object-cover sm:h-32"/>
               <span className="relative mx-auto -mt-5 flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-[#073477] text-lg text-white shadow-md sm:h-14 sm:w-14 sm:text-2xl">{item.icon}</span>
