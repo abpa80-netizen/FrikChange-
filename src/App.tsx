@@ -156,6 +156,22 @@ export default function App() {
     } finally { setBusy(false); }
   }
 
+  async function handleGoogleSignIn() {
+    if (!supabase) return;
+    setBusy(true);
+    setAuthMessage("");
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin },
+      });
+      if (error) throw error;
+    } catch (error) {
+      setBusy(false);
+      setAuthMessage(readableError(error instanceof Error ? error.message : "Connexion Google impossible."));
+    }
+  }
+
   async function handlePasswordResetRequest(event: FormEvent) {
     event.preventDefault();
     if (!supabase) return;
@@ -389,10 +405,16 @@ export default function App() {
           <div className="mt-5 flex gap-2 rounded-xl bg-slate-100 p-1"><button type="button" onClick={() => { setAuthMode("login"); setAuthMessage(""); }} className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold ${authMode === "login" ? "bg-white shadow-sm" : "text-slate-500"}`}>Se connecter</button><button type="button" onClick={() => { setAuthMode("signup"); setAuthMessage(""); }} className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold ${authMode === "signup" ? "bg-white shadow-sm" : "text-slate-500"}`}>Créer mon compte</button></div>
           <form onSubmit={handleAuth} className="mt-5 space-y-4">
             <label className="block text-sm font-semibold">Adresse e-mail<input required type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder="vous@exemple.com" /></label>
-            <label className="block text-sm font-semibold">Mot de passe<input required minLength={6} type="password" autoComplete={authMode === "login" ? "current-password" : "new-password"} value={password} onChange={e => setPassword(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder="6 caractères minimum" /></label>
+            <label className="block text-sm font-semibold">Mot de passe<input required minLength={authMode === "signup" ? 8 : 6} type="password" autoComplete={authMode === "login" ? "current-password" : "new-password"} value={password} onChange={e => setPassword(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder={authMode === "signup" ? "8 caractères minimum" : "Votre mot de passe"} /></label>
             {authMode === "login" && <button type="button" onClick={() => { setResetEmail(email); setAuthView("forgot"); setAuthMessage(""); }} className="text-sm font-semibold text-teal-700 hover:underline">Mot de passe oublié ?</button>}
             <button disabled={busy || !authReady} className="w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white hover:bg-teal-800 disabled:opacity-50">{busy ? "Patientez…" : authMode === "login" ? "Se connecter" : "Créer mon compte"}</button>
-          </form></> : authView === "forgot" ? <form onSubmit={handlePasswordResetRequest} className="mt-5 space-y-4">
+          </form>
+          <div className="my-5 flex items-center gap-3 text-xs font-semibold text-slate-400"><span className="h-px flex-1 bg-slate-200" /><span>OU</span><span className="h-px flex-1 bg-slate-200" /></div>
+          <button type="button" onClick={() => void handleGoogleSignIn()} disabled={busy || !authReady} className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-5 py-3 font-bold text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-50">
+            <span aria-hidden="true" className="text-lg font-black text-[#4285F4]">G</span>
+            {busy ? "Redirection…" : "Continuer avec Google"}
+          </button>
+          </> : authView === "forgot" ? <form onSubmit={handlePasswordResetRequest} className="mt-5 space-y-4">
             <p className="text-sm leading-6 text-slate-600">Saisissez l'adresse e-mail de votre compte. Nous vous enverrons un lien pour choisir un nouveau mot de passe.</p>
             <label className="block text-sm font-semibold">Adresse e-mail<input required type="email" autoComplete="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" /></label>
             <button disabled={busy} className="w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white disabled:opacity-50">{busy ? "Envoi…" : "Envoyer le lien de récupération"}</button>
@@ -402,7 +424,7 @@ export default function App() {
             <button disabled={busy} className="w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white disabled:opacity-50">{busy ? "Modification…" : "Enregistrer le nouveau mot de passe"}</button>
           </form>}
           {authMessage && <p role="status" className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">{authMessage}</p>}
-          <p className="mt-4 text-xs leading-5 text-slate-500">L'inscription utilise l'authentification e-mail de Supabase. Selon les réglages du projet, une confirmation par e-mail peut être nécessaire.</p>
+          <p className="mt-4 text-xs leading-5 text-slate-500">Inscription par e-mail ou avec Google. Une confirmation de l'adresse e-mail peut être nécessaire selon les réglages du service.</p>
         </div> : <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Votre espace</p><h2 className="mt-1 text-2xl font-extrabold">Mes annonces</h2><p className="mt-1 text-xs text-slate-500">{session.user.email}</p></div><div className="flex gap-2"><button onClick={handleSignOut} disabled={busy} className="rounded-xl border border-slate-300 px-3 py-3 text-xs font-bold">Déconnexion</button><button onClick={() => setShowComposer(!showComposer)} className="rounded-xl bg-teal-700 px-4 py-3 text-sm font-bold text-white hover:bg-teal-800">{showComposer ? "Fermer" : "+ Publier"}</button></div></div>
           {showComposer && <form onSubmit={handleCreateListing} className="mt-6 grid gap-4 rounded-2xl bg-slate-50 p-5 md:grid-cols-2">
