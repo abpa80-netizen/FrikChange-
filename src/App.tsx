@@ -307,14 +307,15 @@ export default function App() {
     <main className="min-h-screen bg-[#f5f8f8] pb-24 text-slate-900">
       <section id="accueil" hidden={activeTab !== "home"} className="fk-home bg-white text-slate-900">
         <div className="fk-hero relative w-full overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1581175892881-b0124e689824?auto=format&fit=crop&w=1800&q=90" alt="Mosquée Hassan II de Casablanca illuminée au crépuscule" className="absolute inset-0 h-full w-full object-cover object-[72%_48%]" fetchPriority="high"/>
+          <img src="https://www.voninski.com/images/xl/_DSC8982-HDR-05-2014.jpg" alt="Mosquée Hassan II de Casablanca illuminée au crépuscule" className="absolute inset-0 h-full w-full object-cover object-[72%_48%]" fetchPriority="high"/>
           <div className="absolute inset-0 bg-gradient-to-r from-[#001d52]/82 via-[#062d68]/38 to-[#062d68]/5"/>
           <div className="absolute inset-0 fk-hero-swoosh"/>
           <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-center px-6 pb-10 pt-5 sm:px-10">
             <div className="flex items-center gap-4">
-              <svg viewBox="0 0 120 120" role="img" aria-label="Logo FriKonect" className="h-14 w-14 shrink-0 sm:h-20 sm:w-20">
-                <path d="M22 12h78v19H44v19h47v18H44v39H22z" fill="#fff"/>
-                <path d="M83 43l8 5 3 9-4 7 2 8-7 10-5 13-7 7-4-8-6-7 2-9-5-8 4-9 1-10 8-6z" fill="#22d3c5"/>
+              <svg viewBox="0 0 180 150" role="img" aria-label="Logo FriKonect : F stylisé et silhouette de l’Afrique" className="h-[76px] w-[76px] shrink-0 sm:h-32 sm:w-32" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 12H164C155 30 143 42 123 42H76C60 42 49 50 43 65L24 111V43C24 25 13 12 24 12Z" fill="#fff"/>
+                <path d="M42 69C55 54 69 49 88 49H132C122 69 109 82 89 82H65C55 82 48 88 42 99V69Z" fill="#27D2CE"/>
+                <path d="M105 73L117 68L126 73L136 73L143 83L139 94L144 103L136 116L132 130L123 143L114 136L111 124L102 116L104 105L97 96L101 85L99 77Z" fill="#27D2CE"/>
               </svg>
               <div className="border-l-2 border-white/80 pl-4">
                 <button onClick={() => setActiveTab("home")} className="text-left" aria-label="FriKonect accueil">
