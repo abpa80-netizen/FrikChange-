@@ -313,9 +313,9 @@ export default function App() {
           <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-center px-6 pb-10 pt-5 sm:px-10">
             <div className="flex items-center gap-4">
               <svg viewBox="0 0 180 150" role="img" aria-label="Logo FriKonect : F stylisé et silhouette de l’Afrique" className="h-[76px] w-[76px] shrink-0 sm:h-32 sm:w-32" xmlns="http://www.w3.org/2000/svg">
-                <path d="M24 12H164C155 30 143 42 123 42H76C60 42 49 50 43 65L24 111V43C24 25 13 12 24 12Z" fill="#fff"/>
-                <path d="M42 69C55 54 69 49 88 49H132C122 69 109 82 89 82H65C55 82 48 88 42 99V69Z" fill="#27D2CE"/>
-                <path d="M105 73L117 68L126 73L136 73L143 83L139 94L144 103L136 116L132 130L123 143L114 136L111 124L102 116L104 105L97 96L101 85L99 77Z" fill="#27D2CE"/>
+                <path d="M23 12H158C151 25 140 35 124 35H73C55 35 43 43 37 59L23 96V39C23 22 14 12 23 12Z" fill="#FFFFFF"/>
+                <path d="M39 70C49 54 64 47 84 47H133C126 58 116 67 103 72H76C61 72 50 79 40 94L39 70Z" fill="#20D0C9"/>
+                <path d="M103 66L117 61L126 66L137 65L143 74L139 84L146 94L138 105L135 117L127 130L118 124L115 113L106 107L108 96L100 87L104 77Z" fill="#20D0C9"/>
               </svg>
               <div className="border-l-2 border-white/80 pl-4">
                 <button onClick={() => setActiveTab("home")} className="text-left" aria-label="FriKonect accueil">
