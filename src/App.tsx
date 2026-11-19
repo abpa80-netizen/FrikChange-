@@ -62,6 +62,10 @@ export default function App() {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmSignupPassword, setConfirmSignupPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmSignupPassword, setShowConfirmSignupPassword] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [publicListings, setPublicListings] = useState<Listing[]>([]);
@@ -111,6 +115,16 @@ export default function App() {
     return () => { active = false; listener.subscription.unsubscribe(); };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+    setIsAdmin(false);
+    if (!session?.access_token) return () => { active = false; };
+    fetch("/api/admin/community-listings", { headers: { Authorization: `Bearer ${session.access_token}` } })
+      .then(response => { if (active) setIsAdmin(response.ok); })
+      .catch(() => { if (active) setIsAdmin(false); });
+    return () => { active = false; };
+  }, [session?.access_token]);
+
   const refreshListings = useCallback(async () => {
     if (!supabase) return;
     setLoadError("");
@@ -141,6 +155,10 @@ export default function App() {
   async function handleAuth(event: FormEvent) {
     event.preventDefault();
     if (!supabase) return;
+    if (authMode === "signup" && password !== confirmSignupPassword) {
+      setAuthMessage("Les deux mots de passe ne correspondent pas.");
+      return;
+    }
     setBusy(true); setAuthMessage("");
     try {
       const result = authMode === "signup"
@@ -149,9 +167,10 @@ export default function App() {
       if (result.error) throw result.error;
       if (authMode === "signup" && !result.data.session) {
         setAuthMessage("Compte créé. Consultez votre boîte e-mail pour confirmer votre adresse avant de vous connecter.");
+        setPassword(""); setConfirmSignupPassword("");
       } else {
         setAuthMessage(authMode === "signup" ? "Compte créé et connecté." : "Connexion réussie.");
-        setPassword("");
+        setPassword(""); setConfirmSignupPassword("");
       }
     } catch (error) {
       setAuthMessage(readableError(error instanceof Error ? error.message : "Une erreur est survenue."));
@@ -414,7 +433,8 @@ export default function App() {
           <div className="mt-5 flex gap-2 rounded-xl bg-slate-100 p-1"><button type="button" onClick={() => { setAuthMode("login"); setAuthMessage(""); }} className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold ${authMode === "login" ? "bg-white shadow-sm" : "text-slate-500"}`}>Se connecter</button><button type="button" onClick={() => { setAuthMode("signup"); setAuthMessage(""); }} className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold ${authMode === "signup" ? "bg-white shadow-sm" : "text-slate-500"}`}>Créer mon compte</button></div>
           <form onSubmit={handleAuth} className="mt-5 space-y-4">
             <label className="block text-sm font-semibold">Adresse e-mail<input required type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder="vous@exemple.com" /></label>
-            <label className="block text-sm font-semibold">Mot de passe<input required minLength={authMode === "signup" ? 8 : 6} type="password" autoComplete={authMode === "login" ? "current-password" : "new-password"} value={password} onChange={e => setPassword(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder={authMode === "signup" ? "8 caractères minimum" : "Votre mot de passe"} /></label>
+            <label className="block text-sm font-semibold">Mot de passe<div className="relative mt-1"><input required minLength={authMode === "signup" ? 8 : 6} type={showPassword ? "text" : "password"} autoComplete={authMode === "login" ? "current-password" : "new-password"} value={password} onChange={e => setPassword(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 font-normal outline-none focus:border-teal-600" placeholder={authMode === "signup" ? "8 caractères minimum" : "Votre mot de passe"} /><button type="button" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"} className="absolute inset-y-0 right-3 text-lg text-slate-500">{showPassword ? "🙈" : "👁"}</button></div></label>
+            {authMode === "signup" && <label className="block text-sm font-semibold">Confirmer le mot de passe<div className="relative mt-1"><input required minLength={8} type={showConfirmSignupPassword ? "text" : "password"} autoComplete="new-password" value={confirmSignupPassword} onChange={e => setConfirmSignupPassword(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 font-normal outline-none focus:border-teal-600" placeholder="Répétez votre mot de passe" /><button type="button" onClick={() => setShowConfirmSignupPassword(value => !value)} aria-label={showConfirmSignupPassword ? "Masquer la confirmation" : "Afficher la confirmation"} className="absolute inset-y-0 right-3 text-lg text-slate-500">{showConfirmSignupPassword ? "🙈" : "👁"}</button></div></label>}
             {authMode === "login" && <button type="button" onClick={() => { setResetEmail(email); setAuthView("forgot"); setAuthMessage(""); }} className="text-sm font-semibold text-teal-700 hover:underline">Mot de passe oublié ?</button>}
             <button disabled={busy || !authReady} className="w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white hover:bg-teal-800 disabled:opacity-50">{busy ? "Patientez…" : authMode === "login" ? "Se connecter" : "Créer mon compte"}</button>
           </form>
@@ -454,7 +474,7 @@ export default function App() {
         {authMessage && session && <p role="status" className="mt-4 text-sm text-slate-600">{authMessage}</p>}
       </section>
 
-      {session && (
+      {session && isAdmin && (
         <section id="moderation" hidden={activeTab !== "profile"} className="mx-auto max-w-7xl px-5 pb-8">
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
