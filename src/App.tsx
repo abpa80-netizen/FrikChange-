@@ -59,6 +59,7 @@ export default function App() {
   const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authMessage, setAuthMessage] = useState("");
@@ -99,6 +100,7 @@ export default function App() {
       if (event === "PASSWORD_RECOVERY") {
         setPasswordRecovery(true);
         setAuthView("reset");
+        setActiveTab("profile");
         setAuthMessage("Choisissez votre nouveau mot de passe.");
       } else if (event === "SIGNED_OUT") {
         setPasswordRecovery(false);
@@ -190,10 +192,16 @@ export default function App() {
     event.preventDefault();
     if (!supabase) return;
     setBusy(true); setAuthMessage("");
+    if (newPassword !== confirmNewPassword) {
+      setBusy(false);
+      setAuthMessage("Les deux mots de passe ne correspondent pas.");
+      return;
+    }
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
       setNewPassword("");
+      setConfirmNewPassword("");
       setPasswordRecovery(false);
       setAuthView("form");
       setAuthMode("login");
@@ -394,6 +402,7 @@ export default function App() {
           <p className="mt-3 text-sm leading-6 text-slate-600">Le lien de récupération a été accepté. Choisissez un nouveau mot de passe pour votre compte FriKonect.</p>
           <form onSubmit={handlePasswordUpdate} className="mt-5 space-y-4">
             <label className="block text-sm font-semibold">Nouveau mot de passe<input required minLength={8} type="password" autoComplete="new-password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder="8 caractères minimum" /></label>
+            <label className="block text-sm font-semibold">Confirmer le nouveau mot de passe<input required minLength={8} type="password" autoComplete="new-password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal outline-none focus:border-teal-600" placeholder="Répétez le nouveau mot de passe" /></label>
             <button disabled={busy} className="w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white disabled:opacity-50">{busy ? "Modification…" : "Enregistrer le nouveau mot de passe"}</button>
           </form>
           {authMessage && <p role="status" className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">{authMessage}</p>}
